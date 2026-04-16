@@ -1,0 +1,16 @@
+{
+  "name": "routepilot",
+  "private": true,
+  "version": "0.0.0",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w @routepilot/site",
+    "build:core": "npm run build:css -w @routepilot/core",
+    "build:site": "npm run build -w @routepilot/site",
+    "build": "npm run build:core && npm run build:site",
+    "test": "npm run test -w @routepilot/core"
+  }
+}
