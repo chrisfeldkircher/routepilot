@@ -37,12 +37,12 @@ export function KeyPillars() {
 
   return (
     <section className="py-24 bg-surface">
-      <div className="max-w-screen-2xl mx-auto px-8">
-        <div ref={ref} className="grid grid-cols-1 md:grid-cols-3 gap-12">
+      <div className="max-w-screen-2xl mx-auto px-4 sm:px-8">
+        <div ref={ref} className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 md:gap-12">
           {pillars.map((pillar, i) => (
             <div
               key={pillar.title}
-              className={`p-8 rounded-2xl bg-surface-container hover:-translate-y-1 transition-transform duration-300 reveal reveal-up ${visible ? 'visible' : ''}`}
+              className={`p-5 sm:p-6 md:p-8 rounded-2xl bg-surface-container hover:-translate-y-1 transition-transform duration-300 reveal reveal-up ${visible ? 'visible' : ''}`}
               style={{ transitionDelay: `${i * 0.12}s` }}
             >
               <div
@@ -55,7 +55,7 @@ export function KeyPillars() {
                   {pillar.icon}
                 </span>
               </div>
-              <h4 className="text-xl font-headline font-bold text-white mb-4">{pillar.title}</h4>
+              <h4 className="text-lg sm:text-xl font-headline font-bold text-white mb-4">{pillar.title}</h4>
               <p className="text-on-surface-variant leading-relaxed">{pillar.body}</p>
             </div>
           ))}

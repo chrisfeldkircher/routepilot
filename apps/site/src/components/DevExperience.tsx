@@ -6,15 +6,15 @@ export function DevExperience() {
 
   return (
     <section className="py-24 bg-surface-container-low border-y border-outline-variant/10">
-      <div className="max-w-screen-2xl mx-auto px-8">
-        <div className="flex flex-col lg:flex-row gap-16 items-center">
+      <div className="max-w-screen-2xl mx-auto px-4 sm:px-8">
+        <div className="flex flex-col lg:flex-row gap-8 sm:gap-12 lg:gap-16 items-center">
           <div ref={leftRef} className={`lg:w-1/2 reveal reveal-left ${leftVisible ? 'visible' : ''}`}>
-            <h2 className="text-4xl md:text-5xl font-headline font-bold text-white mb-6 leading-tight">
+            <h2 className="text-2xl sm:text-4xl md:text-5xl font-headline font-bold text-white mb-6 leading-tight">
               Built for DX.
               <br />
               Loved by UX.
             </h2>
-            <p className="text-on-surface-variant text-lg mb-8 leading-relaxed">
+            <p className="text-on-surface-variant text-base sm:text-lg mb-8 leading-relaxed">
               Define steps with a single function call. Selector targeting, tooltip placement,
               and inline markup are all built in — no wrappers, no context providers, no boilerplate.
             </p>
@@ -44,7 +44,7 @@ export function DevExperience() {
                   TypeScript
                 </span>
               </div>
-              <div className="p-8 font-mono text-sm overflow-x-auto leading-relaxed">
+              <div className="p-4 sm:p-8 font-mono text-xs sm:text-sm overflow-x-auto leading-relaxed">
                 <pre className="text-slate-300">
                   <code>
                     <span className="text-tertiary">import</span>

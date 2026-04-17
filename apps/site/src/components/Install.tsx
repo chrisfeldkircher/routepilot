@@ -31,12 +31,12 @@ export function Install() {
 
   return (
     <section id="install" className="py-20 bg-surface">
-      <div ref={ref} className="max-w-3xl mx-auto px-8">
+      <div ref={ref} className="max-w-3xl mx-auto px-4 sm:px-8">
         <div className={`text-center mb-10 reveal reveal-up ${visible ? 'visible' : ''}`}>
           <span className="inline-block text-xs font-mono tracking-widest uppercase text-tertiary mb-4">
             Get started
           </span>
-          <h2 className="text-3xl md:text-4xl font-headline font-bold text-white leading-tight">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-headline font-bold text-white leading-tight">
             One command to install.
           </h2>
         </div>
@@ -55,8 +55,8 @@ export function Install() {
                     onClick={() => setActive(pm)}
                     className={
                       isActive
-                        ? 'relative px-5 py-3 text-sm font-headline font-bold text-white transition-colors'
-                        : 'relative px-5 py-3 text-sm font-headline font-medium text-on-surface-variant hover:text-white transition-colors'
+                        ? 'relative px-3 py-2 sm:px-5 sm:py-3 text-xs sm:text-sm font-headline font-bold text-white transition-colors'
+                        : 'relative px-3 py-2 sm:px-5 sm:py-3 text-xs sm:text-sm font-headline font-medium text-on-surface-variant hover:text-white transition-colors'
                     }
                   >
                     {pm}
@@ -80,7 +80,7 @@ export function Install() {
             </button>
           </div>
 
-          <div className="px-6 py-5 font-mono text-sm overflow-x-auto">
+          <div className="px-4 py-4 sm:px-6 sm:py-5 font-mono text-xs sm:text-sm overflow-x-auto">
             <code className="text-slate-300 whitespace-nowrap">
               <span className="text-primary select-none mr-3">$</span>
               <span className="text-tertiary">{active}</span>

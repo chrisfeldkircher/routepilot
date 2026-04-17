@@ -41,10 +41,10 @@ export function InteractiveDemo() {
 
   return (
     <section id="choose-your-story" className="py-24 bg-surface-container-low">
-      <div className="max-w-screen-2xl mx-auto px-8">
-        <div className="flex flex-col md:flex-row gap-12 items-start">
+      <div className="max-w-screen-2xl mx-auto px-4 sm:px-8">
+        <div className="flex flex-col md:flex-row gap-6 sm:gap-8 md:gap-12 items-start">
           <div ref={leftRef} className={`md:w-1/3 reveal reveal-left ${leftVisible ? 'visible' : ''}`}>
-            <h2 className="text-4xl font-headline font-bold text-white mb-6">Choose Your Story</h2>
+            <h2 className="text-2xl sm:text-4xl font-headline font-bold text-white mb-6">Choose Your Story</h2>
             <p className="text-on-surface-variant mb-8">
               Select a pattern to see how routePilot handles state transitions, gating, and
               environmental preparation.
@@ -81,7 +81,7 @@ export function InteractiveDemo() {
                   RUNTIME_INSTANCE: {activeScenario.toUpperCase().replace(/-/g, '_')}_FLOW_V1
                 </div>
               </div>
-              <div className="aspect-video relative p-12 flex flex-col items-center justify-center bg-[#091328]">
+              <div className="aspect-video relative p-4 sm:p-8 md:p-12 flex flex-col items-center justify-center bg-[#091328]">
                 <div className="absolute inset-0 opacity-10 pointer-events-none">
                   <svg
                     width="100%"
@@ -116,8 +116,8 @@ export function InteractiveDemo() {
                     <circle cx="680" cy="220" r="10" fill="#a3a6ff" />
                   </svg>
                 </div>
-                <div className="glass-panel p-8 rounded-2xl border border-outline-variant/20 text-center relative z-10 max-w-md">
-                  <h3 className="text-2xl font-headline font-bold text-white mb-4">
+                <div className="glass-panel p-4 sm:p-6 md:p-8 rounded-2xl border border-outline-variant/20 text-center relative z-10 max-w-md">
+                  <h3 className="text-lg sm:text-2xl font-headline font-bold text-white mb-4">
                     Live State Visualization
                   </h3>
                   <p className="text-on-surface-variant text-sm mb-6">

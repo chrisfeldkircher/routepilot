@@ -40,20 +40,20 @@ export function UseCaseGrid() {
 
   return (
     <section id="use-cases" className="py-24 bg-surface-container-low">
-      <div className="max-w-screen-2xl mx-auto px-8">
+      <div className="max-w-screen-2xl mx-auto px-4 sm:px-8">
         <div ref={headerRef} className={`text-center mb-16 reveal reveal-up ${headerVisible ? 'visible' : ''}`}>
-          <h2 className="text-4xl font-headline font-bold text-white mb-4">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-headline font-bold text-white mb-4">
             Universal Logic Framework
           </h2>
           <p className="text-on-surface-variant max-w-2xl mx-auto">
             One runtime to rule every guided journey across your application ecosystem.
           </p>
         </div>
-        <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
           {useCases.map((useCase, i) => (
             <div
               key={useCase.title}
-              className={`p-10 bg-surface-container rounded-2xl flex flex-col items-center text-center reveal reveal-up ${gridVisible ? 'visible' : ''}`}
+              className={`p-6 sm:p-8 md:p-10 bg-surface-container rounded-2xl flex flex-col items-center text-center reveal reveal-up ${gridVisible ? 'visible' : ''}`}
               style={{ transitionDelay: `${i * 0.1}s` }}
             >
               <span

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { cpSync, existsSync, mkdirSync, rmSync, statSync } from 'node:fs';
+import { copyFileSync, cpSync, existsSync, mkdirSync, rmSync, statSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
@@ -32,4 +32,5 @@ console.log(`[build-demo] Copying ${demoDist} -> ${publicDemoDir}`);
 rmSync(publicDemoDir, { recursive: true, force: true });
 mkdirSync(publicDemoDir, { recursive: true });
 cpSync(demoDist, publicDemoDir, { recursive: true });
+copyFileSync(resolve(publicDemoDir, 'index.html'), resolve(publicDemoDir, '200.html'));
 console.log('[build-demo] Done.');

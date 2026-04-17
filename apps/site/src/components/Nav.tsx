@@ -22,10 +22,10 @@ export function Nav() {
 
   return (
     <nav className={`w-full top-0 sticky z-50 transition-all duration-300 ${scrolled ? 'bg-[#060e20]/80 backdrop-blur-lg shadow-lg shadow-black/20 border-b border-outline-variant/10' : 'bg-[#060e20]'}`}>
-      <div className="flex justify-between items-center w-full px-8 py-4 max-w-screen-2xl mx-auto">
-        <div className="flex items-center gap-8">
-          <Link to="/" className="flex items-center gap-2 text-xl font-bold tracking-tighter text-white font-headline">
-            <img src="/logo.svg" alt="routePilot" className="h-7 w-auto" />
+      <div className="flex justify-between items-center w-full px-4 sm:px-6 md:px-8 py-3 md:py-4 max-w-screen-2xl mx-auto">
+        <div className="flex items-center gap-4 sm:gap-8">
+          <Link to="/" className="flex items-center gap-2 text-lg sm:text-xl font-bold tracking-tighter text-white font-headline">
+            <img src="/logo.svg" alt="routePilot" className="h-6 sm:h-7 w-auto" />
             routePilot
           </Link>
           <div className="hidden md:flex gap-6 items-center">
@@ -44,7 +44,7 @@ export function Nav() {
             )}
           </div>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 sm:gap-4">
           {isLanding && (
             <button
               type="button"
@@ -58,7 +58,7 @@ export function Nav() {
           {isLanding ? (
             <button
               type="button"
-              className="bg-gradient-to-br from-primary to-primary-dim text-on-primary-fixed px-5 py-2 rounded-md font-headline font-bold text-sm hover:opacity-90 transition-all scale-95 active:opacity-80"
+              className="bg-gradient-to-br from-primary to-primary-dim text-on-primary-fixed px-3 py-1.5 sm:px-5 sm:py-2 rounded-md font-headline font-bold text-xs sm:text-sm hover:opacity-90 transition-all scale-95 active:opacity-80"
               onClick={() => scrollTo('install')}
             >
               Get Started
@@ -66,7 +66,7 @@ export function Nav() {
           ) : (
             <Link
               to="/"
-              className="bg-gradient-to-br from-primary to-primary-dim text-on-primary-fixed px-5 py-2 rounded-md font-headline font-bold text-sm hover:opacity-90 transition-all scale-95 active:opacity-80"
+              className="bg-gradient-to-br from-primary to-primary-dim text-on-primary-fixed px-3 py-1.5 sm:px-5 sm:py-2 rounded-md font-headline font-bold text-xs sm:text-sm hover:opacity-90 transition-all scale-95 active:opacity-80"
             >
               Home
             </Link>

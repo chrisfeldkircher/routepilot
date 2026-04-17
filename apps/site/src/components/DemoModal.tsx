@@ -81,24 +81,24 @@ export function DemoModal({ open, scenario, onClose }: DemoModalProps) {
 
   return (
     <div
-      className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 md:p-8"
+      className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/80 backdrop-blur-sm p-2 sm:p-4 md:p-8"
       role="dialog"
       aria-modal="true"
       aria-label={config.label}
     >
-      <div className="relative w-full h-full max-w-[1400px] max-h-[900px] rounded-xl overflow-hidden bg-surface-container-lowest border border-outline-variant/20 shadow-2xl flex flex-col">
-        <div className="h-10 bg-surface-container-high flex items-center px-4 gap-2 flex-shrink-0">
-          <div className="w-3 h-3 rounded-full bg-error/40" />
-          <div className="w-3 h-3 rounded-full bg-tertiary/40" />
-          <div className="w-3 h-3 rounded-full bg-primary/40" />
-          <div className="ml-4 text-[10px] text-on-surface-variant font-mono tracking-widest">
-            RUNTIME_INSTANCE: {config.runtimeInstance}
+      <div className="relative w-full h-full max-w-[1400px] max-h-[900px] rounded-lg sm:rounded-xl overflow-hidden bg-surface-container-lowest border border-outline-variant/20 shadow-2xl flex flex-col">
+        <div className="h-8 sm:h-10 bg-surface-container-high flex items-center px-2 sm:px-4 gap-2 flex-shrink-0">
+          <div className="hidden sm:block w-3 h-3 rounded-full bg-error/40" />
+          <div className="hidden sm:block w-3 h-3 rounded-full bg-tertiary/40" />
+          <div className="hidden sm:block w-3 h-3 rounded-full bg-primary/40" />
+          <div className="sm:ml-4 text-[8px] sm:text-[10px] text-on-surface-variant font-mono tracking-widest truncate">
+            {config.runtimeInstance}
           </div>
           <button
             type="button"
             onClick={onClose}
             aria-label="Close demo"
-            className="ml-auto material-symbols-outlined text-on-surface-variant hover:text-white transition-colors"
+            className="ml-auto material-symbols-outlined text-on-surface-variant hover:text-white transition-colors text-xl sm:text-2xl"
           >
             close
           </button>
@@ -107,6 +107,7 @@ export function DemoModal({ open, scenario, onClose }: DemoModalProps) {
           src={config.iframeSrc}
           title={`routePilot ${config.label}`}
           className="flex-1 w-full border-0 bg-[#091328]"
+          style={{ minHeight: 0 }}
         />
       </div>
     </div>

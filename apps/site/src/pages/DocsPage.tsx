@@ -35,6 +35,7 @@ function scrollTo(id: string) {
 
 export function DocsPage() {
   const [activeSection, setActiveSection] = useState('getting-started');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -63,8 +64,26 @@ export function DocsPage() {
   return (
     <>
       <Nav />
-      <div className="max-w-screen-2xl mx-auto px-8 py-12 flex gap-12">
-        <aside className="hidden lg:block w-56 flex-shrink-0 sticky top-20 self-start max-h-[calc(100vh-6rem)] overflow-y-auto">
+      {/* Mobile sidebar toggle */}
+      <button
+        type="button"
+        onClick={() => setSidebarOpen(!sidebarOpen)}
+        className="lg:hidden fixed bottom-4 right-4 z-50 bg-primary text-on-primary-fixed w-12 h-12 rounded-full shadow-lg flex items-center justify-center hover:opacity-90 transition-all"
+        aria-label="Toggle navigation"
+      >
+        <span className="material-symbols-outlined">{sidebarOpen ? 'close' : 'menu_book'}</span>
+      </button>
+
+      {/* Mobile sidebar overlay */}
+      {sidebarOpen && (
+        <div
+          className="lg:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-sm"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 md:px-8 py-8 sm:py-12 flex gap-8 lg:gap-12">
+        <aside className={`${sidebarOpen ? 'fixed inset-y-0 left-0 z-50 w-64 bg-surface-container p-6 pt-16 shadow-2xl overflow-y-auto' : 'hidden'} lg:block lg:w-56 lg:p-0 lg:shadow-none lg:bg-transparent flex-shrink-0 lg:sticky lg:top-20 lg:self-start lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto`}>
           <p className="text-[10px] font-mono uppercase tracking-widest text-tertiary mb-4">
             Documentation
           </p>
@@ -73,7 +92,7 @@ export function DocsPage() {
               <button
                 key={s.id}
                 type="button"
-                onClick={() => scrollTo(s.id)}
+                onClick={() => { scrollTo(s.id); setSidebarOpen(false); }}
                 className={`text-left text-sm px-3 py-1.5 rounded-md transition-colors ${
                   activeSection === s.id
                     ? 'text-primary bg-primary/10 font-medium'
@@ -87,9 +106,9 @@ export function DocsPage() {
         </aside>
 
         <main className="flex-1 min-w-0 max-w-4xl">
-          <header className="mb-16">
-            <h1 className="text-5xl font-headline font-bold text-white mb-4">Documentation</h1>
-            <p className="text-on-surface-variant text-lg">
+          <header className="mb-10 sm:mb-16">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-headline font-bold text-white mb-4">Documentation</h1>
+            <p className="text-on-surface-variant text-base sm:text-lg">
               Everything you need to build guided tours, onboarding flows, error recovery
               wizards, and interactive documentation with <Code>@routepilot/core</Code>.
             </p>
@@ -1277,7 +1296,7 @@ interface DagTourNode {
 function Section({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
   return (
     <section id={id} className="mb-20 scroll-mt-24">
-      <h2 className="text-3xl font-headline font-bold text-white mb-6">{title}</h2>
+      <h2 className="text-2xl sm:text-3xl font-headline font-bold text-white mb-6">{title}</h2>
       {children}
     </section>
   );
@@ -1458,7 +1477,7 @@ function CodeBlock({ children }: { children: string }) {
         </span>
         {copied ? 'Copied' : 'Copy'}
       </button>
-      <pre className="p-5 overflow-x-auto font-mono text-sm leading-relaxed whitespace-pre">
+      <pre className="p-3 sm:p-5 overflow-x-auto font-mono text-xs sm:text-sm leading-relaxed whitespace-pre">
         {tokens.map((token, i) => (
           <span key={i} className={TOKEN_COLORS[token.type]}>{token.value}</span>
         ))}
