@@ -5,7 +5,10 @@ export function Footer() {
     <footer className="w-full border-t border-[#192540] bg-[#060e20]">
       <div className="flex flex-col md:flex-row justify-between items-center w-full px-12 py-10 gap-6 max-w-screen-2xl mx-auto">
         <div className="flex flex-col gap-2">
-          <Link to="/" className="text-lg font-bold text-white font-headline">routePilot</Link>
+          <Link to="/" className="flex items-center gap-2 text-lg font-bold text-white font-headline">
+            <img src="/logo.svg" alt="routePilot" className="h-6 w-auto" />
+            routePilot
+          </Link>
           <p className="font-body text-xs text-slate-500">
             &copy; 2026 routePilot. Open-source under MIT License.
           </p>
