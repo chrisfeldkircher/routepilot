@@ -9,7 +9,6 @@ const DEMO_ROUTE = `/tasks/${DEMO_ID}`;
 const PREFILL_COMMENT = 'Looks good, ready to merge!';
 const ASSIGNED_USER = 'Alice Chen';
 
-// ── Preparation IDs ─────────────────────────────────────────────────
 const DEMO_SEED_PREP_ID = 'demo-task-seed';
 const STATUS_OPEN_PREP_ID = 'status-open-phase';
 const STATUS_IN_PROGRESS_PREP_ID = 'status-in-progress-phase';
@@ -20,11 +19,9 @@ const ATTACHMENT_PREVIEW_PREP_ID = 'attachment-preview-open';
 const COMMENT_DRAFT_PREP_ID = 'comment-draft-phase';
 const COMMENT_POSTED_PREP_ID = 'comment-posted-phase';
 
-// ── Interactable IDs (registry handles for modal lifecycle) ─────────
 const ASSIGN_MODAL_ID = 'assign-modal';
 const PREVIEW_MODAL_ID = 'preview-modal';
 
-// ── Step ID groups: the "sharedWith" lists, named so coverage is obvious ──
 const STATUS_OPEN_STEPS = [
   'detail-header',
   'detail-status-bar',
@@ -107,7 +104,6 @@ const COMMENT_POSTED_STEPS = [
   'complete',
 ];
 
-// ── Mutation helpers (operate on demoState + fire re-render event) ───
 const notify = () => {
   window.dispatchEvent(
     new CustomEvent('demo-tour:state-changed', { detail: { taskId: DEMO_ID } })
@@ -189,7 +185,6 @@ const setPreviewModalOpen = (open: boolean, attachmentId: number | null = null) 
   notify();
 };
 
-// ── Steps ────────────────────────────────────────────────────────────
 const helloStep: StepDefinition = {
   id: 'hello',
   route: '/',
@@ -585,8 +580,6 @@ const finalStep: StepDefinition = {
   },
 };
 
-// ── Preparations: each declares the state it seeds + the steps it covers ──
-
 // Every step in the tour except `welcome` itself — used as sharedWith on the
 // tour-scope seed prep so that jumping to ANY step guarantees demoState is
 // initialized (injected task + UI flags) before the target route renders.
@@ -727,8 +720,6 @@ commentPostedStep.preparations = [
     },
   },
 ];
-
-// ── Tour assembly ───────────────────────────────────────────────────
 
 const withChapter = (steps: StepDefinition[], chapter: string): StepDefinition[] =>
   steps.map((s) => ({ ...s, chapter: s.chapter ?? chapter }));

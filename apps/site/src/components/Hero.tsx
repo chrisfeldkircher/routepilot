@@ -1,8 +1,9 @@
+import { Link } from 'react-router-dom';
+
 export function Hero() {
   return (
     <section className="relative min-h-[870px] flex flex-col justify-center items-center px-6 overflow-hidden hero-gradient">
-      {/* Asymmetrical DAG background visual */}
-      <div className="absolute inset-0 z-0 pointer-events-none opacity-20">
+      <div className="absolute inset-0 z-0 pointer-events-none hero-dag-animate float-slow">
         <svg
           fill="none"
           height="100%"
@@ -24,9 +25,9 @@ export function Hero() {
         </svg>
       </div>
 
-      <div className="max-w-4xl w-full text-center z-10">
+      <div className="max-w-4xl w-full text-center z-10 hero-animate">
         <span className="inline-block px-4 py-1.5 mb-6 text-xs font-mono tracking-widest uppercase border border-outline-variant/20 rounded-full text-tertiary">
-          v1.2.0-stable
+          v0.1.0
         </span>
         <h1 className="text-6xl md:text-8xl font-headline font-bold tracking-tight text-white mb-8 leading-[1.1]">
           The Guided <br />
@@ -36,20 +37,20 @@ export function Hero() {
         </h1>
         <p className="text-on-surface-variant text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
           Orchestrate sophisticated, stateful product stories with DAG-based logic. The
-          developer-first engine for onboarding, complex error recovery, and guided feature
-          tours.
+          developer-first engine for onboarding, error recovery, and interactive
+          documentation.
         </p>
         <div className="flex flex-wrap justify-center gap-4">
-          <button
-            type="button"
+          <Link
+            to="/docs"
             className="bg-gradient-to-br from-primary to-primary-dim text-on-primary-fixed px-8 py-3.5 rounded-md font-headline font-bold text-lg hover:opacity-90 transition-all flex items-center gap-2"
           >
             Read the Docs
             <span className="material-symbols-outlined">arrow_forward</span>
-          </button>
+          </Link>
           <button
             type="button"
-            className="px-8 py-3.5 rounded-md font-headline font-bold text-lg border border-outline-variant/30 hover:bg-surface-container transition-all flex items-center gap-2"
+            className="github-star-btn px-8 py-3.5 rounded-md font-headline font-bold text-lg border border-outline-variant/30 hover:bg-surface-container transition-all flex items-center gap-2"
           >
             View on GitHub
             <span className="material-symbols-outlined">star</span>

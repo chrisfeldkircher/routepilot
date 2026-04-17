@@ -75,8 +75,6 @@ export class TourRouteGuard {
    */
   private settled = false;
 
-  // ── Adapter management ──────────────────────────────────────────────
-
   /** Bind a navigation adapter. Call once from the UI layer (e.g. GuidedTourProvider). */
   setAdapter(adapter: TourNavigationAdapter): void {
     this.adapter = adapter;
@@ -85,8 +83,6 @@ export class TourRouteGuard {
   getAdapter(): TourNavigationAdapter | null {
     return this.adapter;
   }
-
-  // ── Policy lifecycle ────────────────────────────────────────────────
 
   /**
    * Called by the state machine (or overlay) when entering a new step.
@@ -109,8 +105,6 @@ export class TourRouteGuard {
     this.settled = false;
   }
 
-  // ── Runtime allowed paths ───────────────────────────────────────────
-
   /**
    * Dynamically allow an additional path for the current step.
    * Used when a `clickSelector` targets a link whose destination is not in the
@@ -123,8 +117,6 @@ export class TourRouteGuard {
   getRuntimeAllowedPaths(): ReadonlySet<string> {
     return this.runtimeAllowedPaths;
   }
-
-  // ── Query ───────────────────────────────────────────────────────────
 
   /** The step's primary path (first entry), or `null` if no policy. */
   getPrimaryPath(): string | null {
@@ -162,8 +154,6 @@ export class TourRouteGuard {
   getMode(): RouteMode | null {
     return this.policy?.mode ?? null;
   }
-
-  // ── Enforcement ─────────────────────────────────────────────────────
 
   /**
    * Navigate to the step's primary path using the adapter.

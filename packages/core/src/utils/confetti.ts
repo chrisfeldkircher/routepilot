@@ -2,7 +2,6 @@ import type { ConfettiConfig } from '../types';
 
 const DEFAULT_CONFETTI_CDN = 'https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js';
 
-/** Set by the engine config; allows consumers to provide a custom script URL. */
 let configuredScriptUrl: string | undefined;
 
 declare global {
@@ -28,7 +27,6 @@ declare global {
 let confettiLoaded = false;
 let confettiLoading: Promise<void> | null = null;
 
-/** Allow the engine config to set the confetti script URL. */
 export const setConfettiScriptUrl = (url: string | undefined): void => {
   configuredScriptUrl = url;
 };

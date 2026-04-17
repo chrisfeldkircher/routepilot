@@ -1,6 +1,8 @@
+import { createElement } from 'react';
 import type { TourDefinition, StepDefinition } from '@routepilot/core';
 import { createStep } from '@routepilot/core';
 import { pickupState } from './pickupState';
+import faqGifUrl from '../assets/faq_gif.gif';
 
 const PICKUP_ROUTE = '/pickup';
 
@@ -71,15 +73,28 @@ const clearWaitlist = () => {
   notify();
 };
 
-// ── Steps ─────────────────────────────────────────────────────────────
+const faqIntroStep: StepDefinition = {
+  id: 'faq-intro',
+  route: PICKUP_ROUTE,
+  tooltip: { placement: 'center' },
+  content: {
+    title: 'Still shipping a wall-of-text FAQ in 2026?',
+    body: 'Your users don\'t read it. Your support team copy-pastes from it. Your PM keeps adding to it.\n\nMeanwhile the ==answer== lives ==inside the app== — two clicks and a highlight away. This tour is what an FAQ looks like when it ==actually runs the app== while it explains.\n\nPress ==|Next|== to see your new help center.',
+    media: createElement('img', {
+      src: faqGifUrl,
+      alt: 'When devs still ship a static FAQ in 2026',
+      loading: 'eager',
+    }),
+  },
+};
 
 const faqPickerStep: StepDefinition = {
   id: 'faq-picker',
   route: PICKUP_ROUTE,
   tooltip: { placement: 'center' },
   content: {
-    title: 'What can we help you unblock?',
-    body: 'Pick a question — the tour will ==interactively walk through the answer== in this ==live app==, then bring you back here to pick another.\n\nBranching uses ==|StepTransition[]|== on a single step. Each transition becomes a button; ==|goTo(target)|== fires when clicked. Same primitive powers policy gates, role-based paths, or experiment arms.',
+    title: 'FAQs, but they actually use the app',
+    body: 'You\'re looking at a ==sub-menu tooltip==. The user clicked a ==high-level help option== on the page (the ==|Browse help topics|== card on the FAQ landing) and the tooltip is now fanning out the ==granular paths== for that topic — right where they are, no redirect to a separate docs site.\n\nBranching uses ==|StepTransition[]|== on a single step. Each transition becomes a button; ==|goTo(target)|== fires when clicked. Same primitive powers policy gates, role-based paths, or experiment arms.\n\nTop-right ==|← Back to FAQ|== replaces the default ==Skip== label. It\'s opt-in per-tour via ==|TourDefinition.navigation|==:\n==|hubReturnLabel: \'← Back to FAQ\'|==\n==|hubAction: \'stop\'|==\n==|stepPickerScope: \'chapter\'|==\n\nUse ==|hubAction: \'stop\'|== when the canonical hub lives ==outside== the tour (like the page-level FAQ landing here). Use ==|hubAction: \'goToHub\'|== with ==|hubNodeId|== when the hub is a step ==inside== the tour. Onboarding tours that want the default ==skip-and-stop== behaviour simply omit the field.',
   },
   transitions: [
     {
@@ -104,8 +119,6 @@ const faqPickerStep: StepDefinition = {
     },
   ],
 };
-
-// ── FAQ 1: Pricing ─────────────────────────────────────────────────────
 
 const priceIntroStep = createStep(
   'price-intro', PICKUP_ROUTE, '[data-tour="price-breakdown"]',
@@ -196,8 +209,6 @@ const priceOutroStep: StepDefinition = {
   ],
 };
 
-// ── FAQ 2: Slot unavailable ────────────────────────────────────────────
-
 const slotIntroStep = createStep(
   'slot-intro', PICKUP_ROUTE, '[data-tour="slot-today-morning"]',
   'Unavailable slots aren\'t dead ends',
@@ -242,8 +253,6 @@ const slotOutroStep: StepDefinition = {
     { target: 'faq-outro', label: 'Done — exit', description: 'Finish the tour' },
   ],
 };
-
-// ── FAQ 3: End-to-end happy path ───────────────────────────────────────
 
 const flowIntroStep: StepDefinition = {
   id: 'flow-intro',
@@ -314,8 +323,6 @@ const flowOutroStep: StepDefinition = {
   ],
 };
 
-// ── Outro ──────────────────────────────────────────────────────────────
-
 const faqOutroStep: StepDefinition = {
   id: 'faq-outro',
   route: PICKUP_ROUTE,
@@ -326,9 +333,8 @@ const faqOutroStep: StepDefinition = {
   },
 };
 
-// ── Tour assembly ──────────────────────────────────────────────────────
-
 const allSteps: StepDefinition[] = [
+  faqIntroStep,
   faqPickerStep,
   priceIntroStep,
   priceRouteStep,
@@ -350,7 +356,6 @@ const allSteps: StepDefinition[] = [
   faqOutroStep,
 ];
 
-// Tour-scope seed so pickupState is initialized for any step
 faqPickerStep.preparations = [
   ...(faqPickerStep.preparations ?? []),
   {
@@ -371,6 +376,11 @@ export const pickupFaqTour: TourDefinition = {
   id: 'pickup-faq',
   name: 'ParcelRelay — FAQ as interactive tour',
   description: 'Branching FAQ tour demonstrating in-app self-service',
+  navigation: {
+    hubReturnLabel: '← Back to FAQ',
+    hubAction: 'stop',
+    stepPickerScope: 'chapter',
+  },
   onStart: () => {
     seedPickupState();
   },
@@ -378,7 +388,7 @@ export const pickupFaqTour: TourDefinition = {
     resetPickupState();
   },
   steps: [
-    ...withChapter([faqPickerStep], 'Help'),
+    ...withChapter([faqIntroStep, faqPickerStep], 'Help'),
     ...withChapter(
       [priceIntroStep, priceRouteStep, pricePackageStep, priceTierStep, priceSurgeStep, priceOutroStep],
       'FAQ — Pricing',

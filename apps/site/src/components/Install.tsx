@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useReveal } from '../useReveal';
 
 type PackageManager = 'npm' | 'yarn' | 'pnpm' | 'bun';
 
@@ -16,6 +17,7 @@ const managers: PackageManager[] = ['npm', 'yarn', 'pnpm', 'bun'];
 export function Install() {
   const [active, setActive] = useState<PackageManager>('npm');
   const [copied, setCopied] = useState(false);
+  const [ref, visible] = useReveal<HTMLDivElement>();
 
   const handleCopy = async () => {
     try {
@@ -28,9 +30,9 @@ export function Install() {
   };
 
   return (
-    <section className="py-20 bg-surface">
-      <div className="max-w-3xl mx-auto px-8">
-        <div className="text-center mb-10">
+    <section id="install" className="py-20 bg-surface">
+      <div ref={ref} className="max-w-3xl mx-auto px-8">
+        <div className={`text-center mb-10 reveal reveal-up ${visible ? 'visible' : ''}`}>
           <span className="inline-block text-xs font-mono tracking-widest uppercase text-tertiary mb-4">
             Get started
           </span>
@@ -39,7 +41,7 @@ export function Install() {
           </h2>
         </div>
 
-        <div className="bg-surface-container-lowest rounded-xl overflow-hidden border border-outline-variant/20 shadow-2xl">
+        <div className={`bg-surface-container-lowest rounded-xl overflow-hidden border border-outline-variant/20 shadow-2xl reveal reveal-scale ${visible ? 'visible' : ''}`} style={{ transitionDelay: '0.15s' }}>
           <div className="flex items-center justify-between bg-surface-container-high border-b border-outline-variant/10">
             <div role="tablist" aria-label="Package manager" className="flex">
               {managers.map((pm) => {

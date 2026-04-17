@@ -121,8 +121,6 @@ const DEMO_TASK: Task = {
   ],
 };
 
-// ── State manager ─────────────────────────────────────────────────────
-
 export interface DemoUiState {
   previewOpen: boolean;
   previewAttachmentId: number | null;

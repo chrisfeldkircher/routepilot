@@ -50,8 +50,8 @@ export function useTourInteractableState(
 
   const safeSetOpen = useCallback(
     (next: boolean) => {
-      if (next && openLocked) return;    // can't open
-      if (!next && closeLocked) return;  // can't close
+      if (next && openLocked) return;
+      if (!next && closeLocked) return;
       setOpen(next);
     },
     [setOpen, openLocked, closeLocked]

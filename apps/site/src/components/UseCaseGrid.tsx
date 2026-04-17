@@ -1,3 +1,5 @@
+import { useReveal } from '../useReveal';
+
 interface UseCase {
   icon: string;
   iconColorClass: string;
@@ -25,18 +27,21 @@ const useCases: UseCase[] = [
     body: 'Step-by-step recovery flows when something goes wrong.',
   },
   {
-    icon: 'auto_awesome',
+    icon: 'auto_stories',
     iconColorClass: 'text-secondary',
-    title: 'Feature Discovery',
-    body: 'Introduce new features without cluttering your main UI.',
+    title: 'Interactive Documentation',
+    body: 'Turn settings pages and complex UIs into self-documenting tours that demonstrate features live.',
   },
 ];
 
 export function UseCaseGrid() {
+  const [headerRef, headerVisible] = useReveal<HTMLDivElement>();
+  const [gridRef, gridVisible] = useReveal<HTMLDivElement>();
+
   return (
-    <section className="py-24 bg-surface-container-low">
+    <section id="use-cases" className="py-24 bg-surface-container-low">
       <div className="max-w-screen-2xl mx-auto px-8">
-        <div className="text-center mb-16">
+        <div ref={headerRef} className={`text-center mb-16 reveal reveal-up ${headerVisible ? 'visible' : ''}`}>
           <h2 className="text-4xl font-headline font-bold text-white mb-4">
             Universal Logic Framework
           </h2>
@@ -44,11 +49,12 @@ export function UseCaseGrid() {
             One runtime to rule every guided journey across your application ecosystem.
           </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {useCases.map((useCase) => (
+        <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {useCases.map((useCase, i) => (
             <div
               key={useCase.title}
-              className="p-10 bg-surface-container rounded-2xl flex flex-col items-center text-center"
+              className={`p-10 bg-surface-container rounded-2xl flex flex-col items-center text-center reveal reveal-up ${gridVisible ? 'visible' : ''}`}
+              style={{ transitionDelay: `${i * 0.1}s` }}
             >
               <span
                 className={`material-symbols-outlined text-4xl mb-6 ${useCase.iconColorClass}`}

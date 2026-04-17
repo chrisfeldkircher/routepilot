@@ -1,11 +1,14 @@
 import { useState } from 'react';
+import { useReveal } from '../useReveal';
 import { DemoModal, type DemoScenario } from './DemoModal';
 
-type ScenarioId = 'standard-onboarding' | 'frequently-asked-questions' | 'error-recovery' | 'feature-tour';
+type ScenarioId = 'standard-onboarding' | 'frequently-asked-questions' | 'error-recovery' | 'interactive-docs';
 
 const LAUNCHABLE_SCENARIOS: Record<string, DemoScenario> = {
   'standard-onboarding': 'standard-onboarding',
   'frequently-asked-questions': 'frequently-asked-questions',
+  'error-recovery': 'error-recovery',
+  'interactive-docs': 'interactive-docs',
 };
 
 interface Scenario {
@@ -18,12 +21,14 @@ const scenarios: Scenario[] = [
   { id: 'standard-onboarding', icon: 'person_add', label: 'Standard Onboarding' },
   { id: 'frequently-asked-questions', icon: 'support_agent', label: 'Frequently Asked Questions' },
   { id: 'error-recovery', icon: 'running_with_errors', label: 'Error Recovery' },
-  { id: 'feature-tour', icon: 'auto_awesome', label: 'Feature Tour' },
+  { id: 'interactive-docs', icon: 'auto_stories', label: 'Interactive Documentation' },
 ];
 
 export function InteractiveDemo() {
   const [activeScenario, setActiveScenario] = useState<ScenarioId>('standard-onboarding');
   const [isDemoOpen, setDemoOpen] = useState(false);
+  const [leftRef, leftVisible] = useReveal<HTMLDivElement>();
+  const [rightRef, rightVisible] = useReveal<HTMLDivElement>();
 
   const launchableScenario = LAUNCHABLE_SCENARIOS[activeScenario];
   const isLaunchable = Boolean(launchableScenario);
@@ -35,10 +40,10 @@ export function InteractiveDemo() {
   };
 
   return (
-    <section className="py-24 bg-surface-container-low">
+    <section id="choose-your-story" className="py-24 bg-surface-container-low">
       <div className="max-w-screen-2xl mx-auto px-8">
         <div className="flex flex-col md:flex-row gap-12 items-start">
-          <div className="md:w-1/3">
+          <div ref={leftRef} className={`md:w-1/3 reveal reveal-left ${leftVisible ? 'visible' : ''}`}>
             <h2 className="text-4xl font-headline font-bold text-white mb-6">Choose Your Story</h2>
             <p className="text-on-surface-variant mb-8">
               Select a pattern to see how routePilot handles state transitions, gating, and
@@ -66,7 +71,7 @@ export function InteractiveDemo() {
             </div>
           </div>
 
-          <div className="md:w-2/3 w-full">
+          <div ref={rightRef} className={`md:w-2/3 w-full reveal reveal-right ${rightVisible ? 'visible' : ''}`} style={{ transitionDelay: '0.15s' }}>
             <div className="rounded-xl overflow-hidden bg-surface-container-lowest border border-outline-variant/10 shadow-2xl relative">
               <div className="h-10 bg-surface-container-high flex items-center px-4 gap-2">
                 <div className="w-3 h-3 rounded-full bg-error/40" />

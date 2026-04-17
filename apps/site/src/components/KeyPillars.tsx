@@ -1,3 +1,5 @@
+import { useReveal } from '../useReveal';
+
 interface Pillar {
   icon: string;
   iconColorClass: string;
@@ -31,14 +33,17 @@ const pillars: Pillar[] = [
 ];
 
 export function KeyPillars() {
+  const [ref, visible] = useReveal<HTMLDivElement>();
+
   return (
     <section className="py-24 bg-surface">
       <div className="max-w-screen-2xl mx-auto px-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-          {pillars.map((pillar) => (
+        <div ref={ref} className="grid grid-cols-1 md:grid-cols-3 gap-12">
+          {pillars.map((pillar, i) => (
             <div
               key={pillar.title}
-              className="p-8 rounded-2xl bg-surface-container hover:translate-y-[-4px] transition-transform duration-300"
+              className={`p-8 rounded-2xl bg-surface-container hover:-translate-y-1 transition-transform duration-300 reveal reveal-up ${visible ? 'visible' : ''}`}
+              style={{ transitionDelay: `${i * 0.12}s` }}
             >
               <div
                 className={`w-12 h-12 rounded-lg flex items-center justify-center mb-6 ${pillar.iconBgClass} ${pillar.iconColorClass}`}

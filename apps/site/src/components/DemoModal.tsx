@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-export type DemoScenario = 'standard-onboarding' | 'frequently-asked-questions';
+export type DemoScenario = 'standard-onboarding' | 'frequently-asked-questions' | 'error-recovery' | 'interactive-docs';
 
 interface DemoModalProps {
   open: boolean;
@@ -21,6 +21,16 @@ const SCENARIO_CONFIG: Record<
     label: 'FAQ-as-Tour Live Demo',
     runtimeInstance: 'FAQ_PICKUP_FLOW_V1',
     iframeSrc: '/demo/pickup?autotour=1&scenario=faq',
+  },
+  'error-recovery': {
+    label: 'Error Recovery Live Demo',
+    runtimeInstance: 'ERROR_RECOVERY_FLOW_V1',
+    iframeSrc: '/demo/import?autotour=1&scenario=error-recovery',
+  },
+  'interactive-docs': {
+    label: 'Interactive Documentation Live Demo',
+    runtimeInstance: 'INTERACTIVE_DOCS_FLOW_V1',
+    iframeSrc: '/demo/settings?autotour=1&scenario=interactive-docs',
   },
 };
 
@@ -54,7 +64,7 @@ export function DemoModal({ open, scenario, onClose }: DemoModalProps) {
       const data = event.data as { type?: string; status?: string } | null;
       if (!data || data.type !== 'routepilot:tour-finished') return;
 
-      const delay = data.status === 'completed' ? 1800 : 200;
+      const delay = data.status === 'completed' ? 1000 : 200;
       closeTimer = window.setTimeout(onClose, delay);
     };
 

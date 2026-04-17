@@ -199,6 +199,32 @@ export interface ConfettiConfig {
   zIndex?: number;
 }
 
+export interface TourNavigationConfig {
+  /**
+   * When set and `hubAction` is `'goToHub'` (the default), this node acts as
+   * an in-tour hub: from any other step the skip button jumps back here
+   * instead of stopping the tour.
+   */
+  hubNodeId?: NodeId;
+  /** Custom label that replaces the default `Skip` label. */
+  hubReturnLabel?: string;
+  /**
+   * What the relabeled skip button does:
+   *   'goToHub' — navigate to `hubNodeId` (requires `hubNodeId`). Falls back
+   *               to stopping the tour when the user is already on the hub.
+   *   'stop'    — always stop the tour (useful when the "hub" lives outside
+   *               the tour, e.g. a page-level FAQ landing).
+   * Defaults to `'goToHub'` when `hubNodeId` is set, otherwise `'stop'`.
+   */
+  hubAction?: 'goToHub' | 'stop';
+  /**
+   * Scope of the built-in step selector dropdown.
+   *   'tour' (default) — lists every step in the tour.
+   *   'chapter'        — lists only steps that share the current step's chapter.
+   */
+  stepPickerScope?: 'tour' | 'chapter';
+}
+
 export interface TourDefinition {
   id: TourId;
   name?: string;
@@ -208,6 +234,7 @@ export interface TourDefinition {
   onFinish?: (ctx: TourLifecycleContext) => void | Promise<void>;
   metadata?: Record<string, unknown>;
   confetti?: ConfettiConfig;
+  navigation?: TourNavigationConfig;
 }
 
 export interface DemoDataController {

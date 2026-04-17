@@ -1,4 +1,4 @@
-import type { NodeId, StepDefinition, StepTransition, TourId} from "../types";
+import type { NodeId, StepDefinition, StepTransition, TourId, TourNavigationConfig } from "../types";
 
 export interface DagTourNode {
     id: NodeId;
@@ -18,6 +18,7 @@ export interface DagTourDefinition {
     entryId: NodeId;
     totalSteps: number;
     sequence: NodeId[];
+    navigation?: TourNavigationConfig;
 }
 
 export interface DagTourHistory {

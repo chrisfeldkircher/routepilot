@@ -76,6 +76,7 @@ export const buildDag = (tour: TourDefinition): DagTourDefinition => {
       nodes,
       totalSteps,
       sequence,
+      navigation: tour.navigation,
     };
 };
 

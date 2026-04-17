@@ -427,20 +427,37 @@ const GuidedTourOverlay = (): JSX.Element | null => {
   const isTransitioning = state.isTransitioning;
   const currentStepId = currentStep?.id ?? '';
 
+  const navigationConfig = state.dag?.navigation;
+  const stepPickerScope = navigationConfig?.stepPickerScope ?? 'tour';
+  const hubNodeId = navigationConfig?.hubNodeId;
+  const hubAction = navigationConfig?.hubAction ?? (hubNodeId ? 'goToHub' : 'stop');
+  const hubReturnLabel = navigationConfig?.hubReturnLabel;
+
+  const currentChapter = useMemo(() => {
+    const step = currentNode?.step;
+    if (!step) return undefined;
+    const chapter =
+      (typeof step.chapter === 'string' && step.chapter.length > 0 && step.chapter) ||
+      (typeof step.meta?.chapter === 'string' && step.meta.chapter.length > 0 && step.meta.chapter) ||
+      undefined;
+    return chapter;
+  }, [currentNode]);
+
   const stepItems: StepSelectorItem[] = useMemo(() => {
-    return orderedNodes.map((node, index) => {
+    const items = orderedNodes.map((node, index) => {
       const step = node.step;
       if (!step) {
         return {
           value: node.id,
           label: `Step ${index + 1}`,
           sublabel: 'Tour Overview',
+          chapter: undefined as string | undefined,
         };
       }
       const chapter =
         (typeof step.chapter === 'string' && step.chapter.length > 0 && step.chapter) ||
         (typeof step.meta?.chapter === 'string' && step.meta.chapter.length > 0 && step.meta.chapter) ||
-        'Tour Overview';
+        undefined;
 
       const contentTitle =
         step.content && typeof step.content === 'object' && 'title' in step.content
@@ -458,10 +475,42 @@ const GuidedTourOverlay = (): JSX.Element | null => {
       return {
         value: step.id,
         label: `${index + 1}. ${label}`,
-        sublabel: chapter,
+        sublabel: chapter ?? 'Tour Overview',
+        chapter,
       };
     });
-  }, [orderedNodes]);
+
+    if (stepPickerScope === 'chapter' && currentChapter) {
+      const filtered = items.filter((item) => item.chapter === currentChapter);
+      if (filtered.length > 0) {
+        return filtered.map(({ chapter: _chapter, ...rest }) => rest);
+      }
+    }
+
+    return items.map(({ chapter: _chapter, ...rest }) => rest);
+  }, [orderedNodes, stepPickerScope, currentChapter]);
+
+  const canGoToHub =
+    hubAction === 'goToHub' &&
+    !!hubNodeId &&
+    !!currentNode &&
+    currentNode.id !== hubNodeId &&
+    !!state.dag?.nodes[hubNodeId];
+
+  const showCustomSkipLabel =
+    !!hubReturnLabel && !!currentNode && (hubAction === 'stop' || canGoToHub);
+
+  const skipButtonLabel = showCustomSkipLabel
+    ? hubReturnLabel
+    : (labels.skip ?? 'Skip');
+
+  const handleSkipOrHubReturn = useCallback(() => {
+    if (canGoToHub && hubNodeId) {
+      void actions.goTo(hubNodeId);
+      return;
+    }
+    void actions.stop();
+  }, [actions, canGoToHub, hubNodeId]);
 
   const handleTitleClick = useCallback(() => {
     setSelectorOpen((prev) => !prev);
@@ -1086,9 +1135,6 @@ const GuidedTourOverlay = (): JSX.Element | null => {
 
   if (state.status !== 'running' || !currentStep) return null;
 
-  const tooltipHeightLimit = Math.max(220, window.innerHeight - TOOLTIP_PADDING * 2);
-  const scrollableMaxHeight = Math.max(160, tooltipHeightLimit - (selectorOpen ? 72 : 48));
-
   const title =
     ((content?.title as ReactNode | undefined) ??
       currentStep.title ??
@@ -1153,7 +1199,7 @@ const GuidedTourOverlay = (): JSX.Element | null => {
 
       <div
         className={tooltipClassName}
-        style={{ ...tipStyle, pointerEvents: 'auto', overflow: 'visible' }}
+        style={{ ...tipStyle, pointerEvents: 'auto' }}
       >
         <div
           className={`tour-tooltip-header gt-px-4 gt-py-3 gt-flex gt-items-center gt-justify-between ${
@@ -1177,11 +1223,11 @@ const GuidedTourOverlay = (): JSX.Element | null => {
           </button>
           <button
             className="tour-tooltip-skip-btn gt-text-xs gt-text-muted-foreground hover:gt-text-foreground"
-            onClick={() => void actions.stop()}
+            onClick={handleSkipOrHubReturn}
             disabled={isTransitioning}
-            aria-label="Skip tour"
+            aria-label={showCustomSkipLabel ? skipButtonLabel : 'Skip tour'}
           >
-            {labels.skip ?? 'Skip'}
+            {skipButtonLabel}
           </button>
         </div>
 
@@ -1207,7 +1253,6 @@ const GuidedTourOverlay = (): JSX.Element | null => {
         {(hint || body || media) && (
           <div
             className="tour-tooltip-body-area gt-px-4"
-            style={{ maxHeight: `${scrollableMaxHeight}px`, overflowY: 'auto' }}
           >
             {hint && (
               <div className="tour-tooltip-hint gt-pt-3 gt-text-xs gt-text-muted-foreground/90">{hint}</div>

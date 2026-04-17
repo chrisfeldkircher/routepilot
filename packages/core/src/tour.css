@@ -208,10 +208,25 @@ img.tour-outline-shimmer::after {
 
 .tour-tooltip {
   position: relative;
+  display: flex;
+  flex-direction: column;
   border-radius: 0.75rem;
-  overflow: visible;
+  overflow: hidden;
   font-family: inherit;
   transition: box-shadow 0.15s ease;
+}
+
+.tour-tooltip-header,
+.tour-tooltip-selector-area,
+.tour-tooltip-branches,
+.tour-tooltip-footer {
+  flex: 0 0 auto;
+}
+
+.tour-tooltip-body-area {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
 }
 
 @layer tour-defaults {

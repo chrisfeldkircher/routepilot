@@ -137,8 +137,6 @@ export default function TaskDetail({ getTask, updateTask, addComment }: Props) {
     setCommentFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
-  // ── Render helpers ──────────────────────────────────────────────────
-
   const renderAttachmentItem = (a: Attachment, tourAttr?: string) => (
     <div
       key={a.id}
@@ -193,13 +191,11 @@ export default function TaskDetail({ getTask, updateTask, addComment }: Props) {
 
       <div className="detail-grid">
         <div>
-          {/* Description */}
           <div className="card" data-tour="task-description">
             <h3 style={{ fontSize: '0.9rem', marginBottom: '0.5rem' }}>Description</h3>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', whiteSpace: 'pre-line' }}>{task.description}</p>
           </div>
 
-          {/* Attachments */}
           {task.attachments.length > 0 && (
             <div className="card" style={{ marginTop: '1rem' }} data-tour="attachments-section">
               <h3 style={{ fontSize: '0.9rem', marginBottom: '0.75rem' }}>
@@ -213,7 +209,6 @@ export default function TaskDetail({ getTask, updateTask, addComment }: Props) {
             </div>
           )}
 
-          {/* Comments */}
           <div className="card" style={{ marginTop: '1rem' }} data-tour="comments-section">
             <h3 style={{ fontSize: '0.9rem', marginBottom: '0.75rem' }}>
               Comments ({task.comments.length})
@@ -244,7 +239,6 @@ export default function TaskDetail({ getTask, updateTask, addComment }: Props) {
               </div>
             ))}
 
-            {/* Comment form */}
             <div style={{ marginTop: '1rem' }} data-tour="comment-form">
               <textarea
                 className="form-textarea"
@@ -255,7 +249,6 @@ export default function TaskDetail({ getTask, updateTask, addComment }: Props) {
                 style={{ minHeight: '70px' }}
               />
 
-              {/* Selected files */}
               {commentFiles.length > 0 && (
                 <div className="selected-files">
                   {commentFiles.map((f, i) => (
@@ -292,7 +285,6 @@ export default function TaskDetail({ getTask, updateTask, addComment }: Props) {
           </div>
         </div>
 
-        {/* Sidebar */}
         <div className="detail-sidebar">
           <div className="card" data-tour="task-sidebar">
             <dl>
@@ -314,7 +306,6 @@ export default function TaskDetail({ getTask, updateTask, addComment }: Props) {
         </div>
       </div>
 
-      {/* Assignment Modal */}
       {assignModalOpen && (
         <div className="modal-backdrop" onClick={() => setAssignModalOpen(false)}>
           <div className="modal" data-tour="assign-modal" onClick={(e) => e.stopPropagation()}>
@@ -341,7 +332,6 @@ export default function TaskDetail({ getTask, updateTask, addComment }: Props) {
         </div>
       )}
 
-      {/* Preview Modal */}
       {previewAttachment && (
         <div className="modal-backdrop" onClick={() => setPreviewModalOpen(false)}>
           <div className="preview-modal" data-tour="preview-modal" onClick={(e) => e.stopPropagation()}>

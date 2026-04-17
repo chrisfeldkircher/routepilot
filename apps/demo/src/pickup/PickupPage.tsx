@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useGuidedTourActions, useGuidedTourState } from '@routepilot/core';
 import {
   pickupState,
   computePriceLines,
@@ -7,6 +8,44 @@ import {
   type ServiceTier,
   type SlotId,
 } from './pickupState';
+import { pickupFaqTour } from './pickupTour';
+
+type FaqCard = {
+  nodeId: string;
+  eyebrow: string;
+  title: string;
+  description?: string;
+  variant?: 'hub' | 'deep-link';
+};
+
+const FAQ_CARDS: FaqCard[] = [
+  {
+    nodeId: 'faq-intro',
+    eyebrow: 'Not sure where to start?',
+    title: 'Browse help topics',
+    description:
+      'Opens a sub-menu tooltip right here in the app — same pattern a high-level FAQ button would use on a landing page.',
+    variant: 'hub',
+  },
+  {
+    nodeId: 'price-intro',
+    eyebrow: 'Pricing',
+    title: 'Why does my total keep changing?',
+    variant: 'deep-link',
+  },
+  {
+    nodeId: 'slot-intro',
+    eyebrow: 'Availability',
+    title: 'My slot is unavailable — what now?',
+    variant: 'deep-link',
+  },
+  {
+    nodeId: 'flow-intro',
+    eyebrow: 'End-to-end',
+    title: 'How do I book a pickup?',
+    variant: 'deep-link',
+  },
+];
 
 const PICKUP_EVENT = 'pickup-tour:state-changed';
 
@@ -14,8 +53,77 @@ const notify = () => {
   window.dispatchEvent(new CustomEvent(PICKUP_EVENT));
 };
 
+const TOUR_ACTIVE_STATUSES = new Set(['preparing', 'running', 'paused']);
+
 export default function PickupPage() {
+  const state = useGuidedTourState();
+  const pickupTourActive =
+    state.tourId === pickupFaqTour.id && TOUR_ACTIVE_STATUSES.has(state.status);
+
+  return pickupTourActive ? <PickupAppView /> : <FaqLandingView />;
+}
+
+function FaqLandingView() {
+  const tourActions = useGuidedTourActions();
+
+  const launchFaq = (nodeId: string) => {
+    void tourActions.startWithDefinition(pickupFaqTour, { startNodeId: nodeId });
+  };
+
+  return (
+    <div className="faq-landing-page">
+      <header className="faq-landing-hero">
+        <span className="faq-landing-eyebrow">ParcelRelay · Help Center</span>
+        <h1>How can we help?</h1>
+        <p>
+          Quick answers for the courier pickup flow. Click a question and instead of reading a
+          doc, the app itself walks you through the answer.
+        </p>
+        <div className="faq-landing-search" aria-hidden="true">
+          <span className="faq-landing-search-icon">🔍</span>
+          <span className="faq-landing-search-placeholder">
+            Try "why is my total different from the estimate"…
+          </span>
+          <span className="faq-landing-search-shortcut">⌘ K</span>
+        </div>
+      </header>
+
+      <section className="faq-landing-grid">
+        {FAQ_CARDS.map((card) => (
+          <button
+            key={card.nodeId}
+            type="button"
+            className={`pickup-faq-card pickup-faq-card-${card.variant}`}
+            onClick={() => launchFaq(card.nodeId)}
+          >
+            <span className="pickup-faq-eyebrow">{card.eyebrow}</span>
+            <span className="pickup-faq-title">{card.title}</span>
+            {card.description && (
+              <span className="pickup-faq-description">{card.description}</span>
+            )}
+            <span className="pickup-faq-cta">
+              {card.variant === 'hub' ? 'Open sub-menu' : 'Walk me through it'}
+              <span aria-hidden="true">→</span>
+            </span>
+          </button>
+        ))}
+      </section>
+
+      <footer className="faq-landing-footnote">
+        <p>
+          Under the hood: each card calls{' '}
+          <code>startWithDefinition(pickupFaqTour, &#123; startNodeId &#125;)</code>. The hub
+          card lands on <code>faq-picker</code> (sub-menu tooltip pattern); the others jump
+          straight into their chapter intro step. Closing a tour returns you here.
+        </p>
+      </footer>
+    </div>
+  );
+}
+
+function PickupAppView() {
   const [, setTick] = useState(0);
+
   useEffect(() => {
     const handler = () => setTick((t) => t + 1);
     window.addEventListener(PICKUP_EVENT, handler);
