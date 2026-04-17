@@ -48,13 +48,15 @@ export function Hero() {
             Read the Docs
             <span className="material-symbols-outlined">arrow_forward</span>
           </Link>
-          <button
-            type="button"
+          <a
+            href="https://github.com/chrisfeldkircher/routepilot"
+            target="_blank"
+            rel="noopener noreferrer"
             className="github-star-btn px-8 py-3.5 rounded-md font-headline font-bold text-lg border border-outline-variant/30 hover:bg-surface-container transition-all flex items-center gap-2"
           >
             View on GitHub
             <span className="material-symbols-outlined">star</span>
-          </button>
+          </a>
         </div>
       </div>
     </section>
