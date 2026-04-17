@@ -13,17 +13,28 @@ const demoDist = resolve(repoRoot, 'apps', 'demo', 'dist');
 const publicDemoDir = resolve(siteRoot, 'public', 'demo');
 
 console.log('[build-demo] Building @routepilot/demo with base=/demo/');
-const build = spawnSync('npm', ['run', 'build', '-w', '@routepilot/demo'], {
+const isWindows = process.platform === 'win32';
+const npmCmd = isWindows ? 'npm.cmd' : 'npm';
+
+const build = spawnSync(npmCmd, ['run', 'build', '-w', '@routepilot/demo'], {
   cwd: repoRoot,
   stdio: 'inherit',
   env: { ...process.env, VITE_PUBLIC_BASE: '/demo/' },
 });
 if (build.status !== 0) {
+  if (existsSync(resolve(publicDemoDir, 'index.html'))) {
+    console.warn('[build-demo] Build failed but existing demo found in public/demo — skipping.');
+    process.exit(0);
+  }
   console.error('[build-demo] @routepilot/demo build failed');
   process.exit(build.status ?? 1);
 }
 
 if (!existsSync(demoDist) || !statSync(demoDist).isDirectory()) {
+  if (existsSync(resolve(publicDemoDir, 'index.html'))) {
+    console.warn('[build-demo] No build output but existing demo found — skipping.');
+    process.exit(0);
+  }
   console.error(`[build-demo] Expected build output at ${demoDist}`);
   process.exit(1);
 }
