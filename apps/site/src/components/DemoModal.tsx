@@ -20,17 +20,17 @@ const SCENARIO_CONFIG: Record<
   'frequently-asked-questions': {
     label: 'FAQ-as-Tour Live Demo',
     runtimeInstance: 'FAQ_PICKUP_FLOW_V1',
-    iframeSrc: '/demo/pickup?autotour=1&scenario=faq',
+    iframeSrc: '/demo/?autotour=1&scenario=faq&route=pickup',
   },
   'error-recovery': {
     label: 'Error Recovery Live Demo',
     runtimeInstance: 'ERROR_RECOVERY_FLOW_V1',
-    iframeSrc: '/demo/import?autotour=1&scenario=error-recovery',
+    iframeSrc: '/demo/?autotour=1&scenario=error-recovery&route=import',
   },
   'interactive-docs': {
     label: 'Interactive Documentation Live Demo',
     runtimeInstance: 'INTERACTIVE_DOCS_FLOW_V1',
-    iframeSrc: '/demo/settings?autotour=1&scenario=interactive-docs',
+    iframeSrc: '/demo/?autotour=1&scenario=interactive-docs&route=settings',
   },
 };
 

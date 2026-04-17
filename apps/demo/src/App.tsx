@@ -131,8 +131,27 @@ function TourController() {
   );
 }
 
+function useRouteFromQuery() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const didRedirect = useRef(false);
+
+  useEffect(() => {
+    if (didRedirect.current) return;
+    const params = new URLSearchParams(location.search);
+    const route = params.get('route');
+    if (route && location.pathname === '/') {
+      didRedirect.current = true;
+      params.delete('route');
+      const remaining = params.toString();
+      navigate(`/${route}${remaining ? `?${remaining}` : ''}`, { replace: true });
+    }
+  }, [location, navigate]);
+}
+
 function AppContent() {
   const store = useTaskStore();
+  useRouteFromQuery();
 
   return (
     <>
