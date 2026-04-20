@@ -5,7 +5,7 @@ type PackageManager = 'npm' | 'yarn' | 'pnpm' | 'bun';
 type FrameworkOption = 'react' | 'angular';
 
 const packages: Record<FrameworkOption, string> = {
-  react: '@routepilot/react',
+  react: '@routepilot/engine @routepilot/react',
   angular: '@routepilot/engine @routepilot/angular',
 };
 

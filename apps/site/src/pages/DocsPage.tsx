@@ -254,7 +254,7 @@ export function DocsPage() {
               framework={framework}
               onChange={setFramework}
               react={<>
-                <CodeBlock>{`npm install @routepilot/react`}</CodeBlock>
+                <CodeBlock>{`npm install @routepilot/engine @routepilot/react`}</CodeBlock>
                 <H3>What to create</H3>
                 <P>
                   A typical React integration needs three things: a root mount for the

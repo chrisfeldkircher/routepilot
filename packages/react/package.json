@@ -3,23 +3,51 @@
   "version": "0.1.0",
   "description": "React bindings for RoutePilot — guided tour overlay, provider, and hooks.",
   "license": "MIT",
+  "homepage": "https://routepilot.dev",
+  "bugs": {
+    "url": "https://github.com/chrisfeldkircher/routepilot/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chrisfeldkircher/routepilot.git",
+    "directory": "packages/react"
+  },
+  "keywords": [
+    "guided-tour",
+    "product-tour",
+    "onboarding",
+    "react"
+  ],
   "type": "module",
-  "main": "src/index.ts",
-  "types": "src/index.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "files": [
-    "src"
+    "dist",
+    "README.md"
   ],
   "exports": {
-    ".": "./src/index.ts"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "peerDependencies": {
-    "@routepilot/engine": "*",
+    "@routepilot/engine": "^0.1.0",
     "react": "^18.0.0 || ^19.0.0",
     "react-dom": "^18.0.0 || ^19.0.0"
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts --clean --sourcemap --external react,react-dom,@routepilot/engine --out-dir dist",
+    "prepack": "npm run build"
   },
   "devDependencies": {
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "tsup": "^8.5.1",
     "typescript": "~5.9.0"
   }
 }

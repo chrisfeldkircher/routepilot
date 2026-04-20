@@ -17,7 +17,9 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@routepilot/engine": ["../../packages/engine/src/index.ts"],
+      "@routepilot/react": ["../../packages/react/src/index.ts"]
     }
   },
   "include": ["src"]
