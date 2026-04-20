@@ -57,6 +57,8 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
+      '@routepilot/engine': path.resolve(__dirname, '../../packages/engine/src'),
+      '@routepilot/react': path.resolve(__dirname, '../../packages/react/src'),
     },
   },
   server: {

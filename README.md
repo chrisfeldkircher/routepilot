@@ -2,12 +2,19 @@
 
 **A zero-intrusion guided tour engine for the web.**
 
+[![CI](https://github.com/chrisfeldkircher/routepilot/actions/workflows/ci.yml/badge.svg)](https://github.com/chrisfeldkircher/routepilot/actions/workflows/ci.yml)
 [![Documentation](https://img.shields.io/badge/docs-routepilot.dev%2Fdocs-7c8cff?style=flat-square)](https://routepilot.dev/docs)
 [![Angular Example](https://img.shields.io/badge/example-angular-0f6cbd?style=flat-square)](https://github.com/chrisfeldkircher/routepilot/tree/main/examples/angular)
 
 Build onboarding flows, error recovery wizards, interactive documentation, and contextual help — all without touching your application data or modifying your app code to accommodate the tour.
 
 routePilot runs as a pure overlay. It observes your UI through CSS selectors, manages its own state machine, and tears down cleanly when the tour ends. Your app doesn't know a tour is running. The core engine (`@routepilot/engine`) is fully framework-agnostic — framework packages provide thin UI bindings on top.
+
+## Packages
+
+- **`@routepilot/engine`** — framework-agnostic core: state machine, DAG navigation, preparations, shared types, bridges, and CSS.
+- **`@routepilot/react`** — React bindings: provider, overlay, hooks, and React-first integration helpers.
+- **`@routepilot/angular`** — Angular bindings: service, overlay component, router adapter, directives, and Angular-first integration helpers.
 
 ## Documentation
 
@@ -68,7 +75,7 @@ Most tour libraries force you to wrap components, inject props, or restructure y
 ### React
 
 ```bash
-npm install @routepilot/react
+npm install @routepilot/engine @routepilot/react
 ```
 
 ```tsx

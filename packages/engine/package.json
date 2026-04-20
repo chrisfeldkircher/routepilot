@@ -3,19 +3,49 @@
   "version": "0.1.0",
   "description": "Framework-agnostic guided tour engine — state machine, DAG navigation, preparation lifecycle.",
   "license": "MIT",
+  "homepage": "https://routepilot.dev",
+  "bugs": {
+    "url": "https://github.com/chrisfeldkircher/routepilot/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chrisfeldkircher/routepilot.git",
+    "directory": "packages/engine"
+  },
+  "keywords": [
+    "guided-tour",
+    "product-tour",
+    "onboarding",
+    "documentation",
+    "react",
+    "angular"
+  ],
   "type": "module",
-  "main": "src/index.ts",
-  "types": "src/index.ts",
+  "sideEffects": [
+    "*.css"
+  ],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "files": [
-    "src"
+    "dist",
+    "README.md"
   ],
   "exports": {
-    ".": "./src/index.ts",
-    "./tour.css": "./src/tour.css",
-    "./tour-utilities.css": "./src/tour-utilities.css"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./tour.css": "./dist/tour.css",
+    "./tour-utilities.css": "./dist/tour-utilities.css"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
+    "build": "tsup src/index.ts --format esm --dts --clean --sourcemap --out-dir dist && node ./scripts/sync-assets.mjs",
     "build:css": "tailwindcss -i src/tailwind-input.css -o src/tour-utilities.css --minify -c tailwind.config.js",
+    "prepack": "npm run build",
     "test": "vitest run",
     "test:watch": "vitest"
   },
@@ -23,6 +53,7 @@
     "@tailwindcss/cli": "^4.2.2",
     "jsdom": "^25.0.1",
     "tailwindcss": "^3.4.19",
+    "tsup": "^8.5.1",
     "typescript": "~5.9.0",
     "vitest": "^3.2.3"
   }
