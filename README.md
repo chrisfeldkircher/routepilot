@@ -5,6 +5,9 @@
 [![CI](https://github.com/chrisfeldkircher/routepilot/actions/workflows/ci.yml/badge.svg)](https://github.com/chrisfeldkircher/routepilot/actions/workflows/ci.yml)
 [![Documentation](https://img.shields.io/badge/docs-routepilot.dev%2Fdocs-7c8cff?style=flat-square)](https://routepilot.dev/docs)
 [![Angular Example](https://img.shields.io/badge/example-angular-0f6cbd?style=flat-square)](https://github.com/chrisfeldkircher/routepilot/tree/main/examples/angular)
+[![npm engine](https://img.shields.io/npm/v/%40routepilot%2Fengine?label=engine&style=flat-square&color=cb3837)](https://www.npmjs.com/package/@routepilot/engine)
+[![npm react](https://img.shields.io/npm/v/%40routepilot%2Freact?label=react&style=flat-square&color=61dafb)](https://www.npmjs.com/package/@routepilot/react)
+[![npm angular](https://img.shields.io/npm/v/%40routepilot%2Fangular?label=angular&style=flat-square&color=dd0031)](https://www.npmjs.com/package/@routepilot/angular)
 
 Build onboarding flows, error recovery wizards, interactive documentation, and contextual help — all without touching your application data or modifying your app code to accommodate the tour.
 
