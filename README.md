@@ -2,6 +2,7 @@
 
 **A zero-intrusion guided tour engine for the web.**
 
+[![CI](https://github.com/chrisfeldkircher/routepilot/actions/workflows/ci.yml/badge.svg)](https://github.com/chrisfeldkircher/routepilot/actions/workflows/ci.yml)
 [![Documentation](https://img.shields.io/badge/docs-routepilot.dev%2Fdocs-7c8cff?style=flat-square)](https://routepilot.dev/docs)
 [![Angular Example](https://img.shields.io/badge/example-angular-0f6cbd?style=flat-square)](https://github.com/chrisfeldkircher/routepilot/tree/main/examples/angular)
 
