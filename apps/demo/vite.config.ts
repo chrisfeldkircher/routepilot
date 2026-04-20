@@ -11,6 +11,6 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
-    exclude: ['@routepilot/core'],
+    exclude: ['@routepilot/engine', '@routepilot/react'],
   },
 });

@@ -55,8 +55,6 @@
   }
 }
 
-/* ── Scroll-reveal transitions ─────────────────────────────────────── */
-
 .reveal {
   opacity: 0;
   will-change: transform, opacity;
@@ -74,8 +72,6 @@
   opacity: 1;
   transform: none;
 }
-
-/* ── Hero entrance (keyframes — runs once on load) ─────────────────── */
 
 @keyframes hero-fade-in {
   from {
@@ -115,8 +111,6 @@
 .float-slow {
   animation: float 6s ease-in-out infinite;
 }
-
-/* ── Star hover fill ──────────────────────────────────────────────── */
 
 .github-star-btn .material-symbols-outlined {
   transition: font-variation-settings 0.3s ease, color 0.3s ease;

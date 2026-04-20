@@ -1,0 +1,29 @@
+{
+  "name": "@routepilot/engine",
+  "version": "0.1.0",
+  "description": "Framework-agnostic guided tour engine — state machine, DAG navigation, preparation lifecycle.",
+  "license": "MIT",
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "files": [
+    "src"
+  ],
+  "exports": {
+    ".": "./src/index.ts",
+    "./tour.css": "./src/tour.css",
+    "./tour-utilities.css": "./src/tour-utilities.css"
+  },
+  "scripts": {
+    "build:css": "tailwindcss -i src/tailwind-input.css -o src/tour-utilities.css --minify -c tailwind.config.js",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.2.2",
+    "jsdom": "^25.0.1",
+    "tailwindcss": "^3.4.19",
+    "typescript": "~5.9.0",
+    "vitest": "^3.2.3"
+  }
+}

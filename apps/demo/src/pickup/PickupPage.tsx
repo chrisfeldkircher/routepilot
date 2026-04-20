@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useGuidedTourActions, useGuidedTourState } from '@routepilot/core';
+import { useGuidedTourActions, useGuidedTourState } from '@routepilot/react';
 import {
   pickupState,
   computePriceLines,

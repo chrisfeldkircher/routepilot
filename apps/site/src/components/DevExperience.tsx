@@ -51,7 +51,7 @@ export function DevExperience() {
                     {' { createStep } '}
                     <span className="text-tertiary">from</span>
                     {' '}
-                    <span className="text-primary-dim">&apos;@routepilot/core&apos;</span>
+                    <span className="text-primary-dim">&apos;@routepilot/react&apos;</span>
                     {';\n\n'}
                     <span className="text-tertiary">export const</span>
                     {' welcomeStep = '}

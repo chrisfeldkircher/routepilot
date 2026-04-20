@@ -51,9 +51,7 @@ export function DemoModal({ open, scenario, onClose }: DemoModalProps) {
     };
   }, [open, onClose]);
 
-  // Auto-close when the embedded demo signals the tour has finished.
-  // The demo iframe posts 'routepilot:tour-finished' on completion / exit / error.
-  // A short delay lets the final step (and confetti) breathe before the modal closes.
+  // Let the demo finish its outro before the modal disappears.
   useEffect(() => {
     if (!open) return;
 

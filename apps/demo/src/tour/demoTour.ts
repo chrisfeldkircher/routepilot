@@ -1,5 +1,5 @@
-import type { TourDefinition, StepDefinition } from '@routepilot/core';
-import { createStep } from '@routepilot/core';
+import type { TourDefinition, StepDefinition } from '@routepilot/react';
+import { createStep } from '@routepilot/react';
 import { createElement } from 'react';
 import { demoState, DEMO_ID } from './demoState';
 import helloGifUrl from '../assets/hello_gif.gif';

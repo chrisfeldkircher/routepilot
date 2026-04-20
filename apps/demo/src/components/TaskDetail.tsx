@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { useTourInteractableState } from '@routepilot/core';
+import { useTourInteractableState } from '@routepilot/react';
 import type { Task, Comment, Attachment } from '../data';
 import { USERS, formatFileSize, getFileIcon } from '../data';
 import { demoState, DEMO_ID } from '../tour/demoState';

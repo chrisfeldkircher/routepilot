@@ -4,13 +4,32 @@
   "version": "0.0.0",
   "workspaces": [
     "packages/*",
-    "apps/*"
+    "apps/*",
+    "examples/*"
   ],
   "scripts": {
     "dev": "npm run dev -w @routepilot/site",
-    "build:core": "npm run build:css -w @routepilot/core",
+    "dev:angular": "npm start -w @routepilot/angular-example",
+    "build:engine": "npm run build:css -w @routepilot/engine",
     "build:site": "npm run build -w @routepilot/site",
-    "build": "npm run build:core && npm run build:site",
-    "test": "npm run test -w @routepilot/core"
+    "build:angular-example": "npm run build -w @routepilot/angular-example",
+    "build": "npm run build:engine && npm run build:site && npm run build:angular-example",
+    "test": "npm run test -w @routepilot/engine",
+    "check": "npm run test && npm run build"
+  },
+  "devDependencies": {
+    "typescript": "~5.9.0"
+  },
+  "overrides": {
+    "@angular/core": "21.2.9",
+    "@angular/common": "21.2.9",
+    "@angular/compiler": "21.2.9",
+    "@angular/compiler-cli": "21.2.9",
+    "@angular/forms": "21.2.9",
+    "@angular/platform-browser": "21.2.9",
+    "@angular/platform-browser-dynamic": "21.2.9",
+    "@angular/router": "21.2.9",
+    "@angular/animations": "21.2.9",
+    "esbuild": "0.27.3"
   }
 }

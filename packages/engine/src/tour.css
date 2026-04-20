@@ -1,0 +1,747 @@
+:root {
+  /* Accent colors (RGB channels for alpha flexibility) */
+  --tour-accent: 99, 102, 241;
+  --tour-accent-secondary: 139, 92, 246;
+  --tour-accent-tertiary: 96, 165, 250;
+
+  /* Backdrop overlay */
+  --tour-backdrop-opacity: 0.55;
+
+  /* Spotlight cutout ring */
+  --tour-spotlight-bg: rgba(15, 23, 42, 0.12);
+
+  /* Element outline shimmer (conic-gradient on buttons, etc.) */
+  --tour-outline-speed: 2.6s;
+  --tour-outline-opacity: 0.9;
+
+  /* Element outline pulse (box-shadow fallback for form elements) */
+  --tour-outline-pulse-speed: 2s;
+
+  /* Text shimmer */
+  --tour-text-base: hsl(var(--muted-foreground, 0 0% 64%));
+  --tour-text-shimmer: rgba(var(--tour-accent), 1);
+  --tour-text-shimmer-speed: 3s;
+
+  /* Pill badge */
+  --tour-pill-bg-from: rgba(var(--tour-accent-secondary), 0.2);
+  --tour-pill-bg-to: rgba(var(--tour-accent-tertiary), 0.2);
+  --tour-pill-border: rgba(var(--tour-accent-secondary), 0.15);
+  --tour-pill-radius: 6px;
+  --tour-pill-padding: 1px 8px;
+}
+
+/* Dark mode adjustments */
+:is(.dark, [data-theme="dark"]) {
+  --tour-pill-bg-from: rgba(var(--tour-accent-secondary), 0.25);
+  --tour-pill-bg-to: rgba(var(--tour-accent-tertiary), 0.25);
+  --tour-pill-border: rgba(129, 131, 244, 0.2);
+}
+
+/* ── Element outline shimmer ───────────────────────────────────────── */
+
+@property --tour-run-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+.tour-outline-shimmer {
+  position: relative;
+  isolation: isolate;
+}
+
+.tour-outline-shimmer::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: inherit;
+  padding: 3px;
+  background: conic-gradient(
+    from var(--tour-run-angle),
+    transparent 0deg,
+    rgba(var(--tour-accent), 0.85) 18deg,
+    transparent 36deg
+  );
+  animation: tour-outline-rotate var(--tour-outline-speed) linear infinite;
+  pointer-events: none;
+  z-index: -1;
+  opacity: var(--tour-outline-opacity);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+}
+
+/* Fallback for replaced/form elements that don't support ::after */
+textarea.tour-outline-shimmer,
+input.tour-outline-shimmer,
+select.tour-outline-shimmer,
+img.tour-outline-shimmer {
+  animation: tour-outline-pulse var(--tour-outline-pulse-speed) ease-in-out infinite;
+}
+
+textarea.tour-outline-shimmer::after,
+input.tour-outline-shimmer::after,
+select.tour-outline-shimmer::after,
+img.tour-outline-shimmer::after {
+  display: none;
+}
+
+@keyframes tour-outline-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0 0 3px rgba(var(--tour-accent), 0.3),
+      0 0 8px rgba(var(--tour-accent), 0.15);
+  }
+  50% {
+    box-shadow:
+      0 0 0 3px rgba(var(--tour-accent), 0.7),
+      0 0 16px rgba(var(--tour-accent), 0.35);
+  }
+}
+
+@keyframes tour-outline-rotate {
+  to { --tour-run-angle: 360deg; }
+}
+
+/* ── Text shimmer ──────────────────────────────────────────────────── */
+
+.tour-text-highlight {
+  background: linear-gradient(
+    90deg,
+    var(--tour-text-base) 0%,
+    var(--tour-text-base) 35%,
+    var(--tour-text-shimmer) 50%,
+    var(--tour-text-base) 65%,
+    var(--tour-text-base) 100%
+  );
+  background-size: 300% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: tour-text-shimmer var(--tour-text-shimmer-speed) ease-in-out infinite;
+}
+
+@keyframes tour-text-shimmer {
+  0%   { background-position: 100% center; }
+  100% { background-position: 0% center; }
+}
+
+/* ── Pill badge ────────────────────────────────────────────────────── */
+
+.tour-text-pill {
+  display: inline-block;
+  background: linear-gradient(135deg, var(--tour-pill-bg-from), var(--tour-pill-bg-to));
+  border: 1px solid var(--tour-pill-border);
+  border-radius: var(--tour-pill-radius);
+  padding: var(--tour-pill-padding);
+  margin: 0 1px;
+}
+
+/* ── Shimmer pill (combined) ───────────────────────────────────────── */
+
+.tour-text-pill.tour-text-highlight {
+  border: 1px solid rgba(var(--tour-accent), 0.2);
+  background:
+    linear-gradient(
+      90deg,
+      var(--tour-text-base) 0%,
+      var(--tour-text-base) 35%,
+      var(--tour-text-shimmer) 50%,
+      var(--tour-text-base) 65%,
+      var(--tour-text-base) 100%
+    ),
+    linear-gradient(135deg, var(--tour-pill-bg-from), var(--tour-pill-bg-to));
+  background-size: 300% 100%, 100% 100%;
+  -webkit-background-clip: text, padding-box;
+  background-clip: text, padding-box;
+  -webkit-text-fill-color: transparent;
+  animation: tour-text-shimmer-pill var(--tour-text-shimmer-speed) ease-in-out infinite;
+}
+
+:is(.dark, [data-theme="dark"]) .tour-text-pill.tour-text-highlight {
+  border-color: var(--tour-pill-border);
+}
+
+@keyframes tour-text-shimmer-pill {
+  0%   { background-position: 100% center, 0 0; }
+  100% { background-position: 0% center, 0 0; }
+}
+
+/* ── Spotlight cutout animations ──────────────────────────────────── */
+
+/* Gentle bob animation — the spotlight "breathes" up and down */
+@keyframes tour-highlight-bob {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-2px) scale(1.01); }
+}
+
+/* Smooth transition when the spotlight moves between elements */
+.tour-highlight-pointer {
+  transition:
+    top 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55),
+    left 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55),
+    width 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55),
+    height 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  border-radius: 15px;
+}
+
+/* Pseudo-element for the bob animation (avoids interfering with transitions) */
+.tour-highlight-pointer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  animation: tour-highlight-bob 2s cubic-bezier(0.65, -0.6, 0.32, 1.6) infinite;
+}
+
+/* Continuous bob animation on the spotlight cutout */
+.tour-highlight-bounce {
+  animation: tour-highlight-bob 2s cubic-bezier(0.65, -0.6, 0.32, 1.6) infinite;
+}
+
+/* ── Tooltip container ───────────────────────────────────────────────
+   Structural styles (always applied) are on .tour-tooltip.
+   Visual defaults (background, color, shadow) are in @layer so that
+   app-level classes like Tailwind's glass-card override them naturally.
+*/
+
+.tour-tooltip {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  font-family: inherit;
+  transition: box-shadow 0.15s ease;
+}
+
+/* When the step selector is open, let the dropdown panel escape the tooltip
+   so its floating options are not clipped. */
+.tour-tooltip:has(.tour-tooltip-selector-area) {
+  overflow: visible !important;
+  max-height: none !important;
+}
+
+.tour-tooltip-header,
+.tour-tooltip-selector-area,
+.tour-tooltip-branches,
+.tour-tooltip-footer {
+  flex: 0 0 auto;
+}
+
+.tour-tooltip-body-area {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+@layer tour-defaults {
+  .tour-tooltip {
+    border: 1px solid var(--tour-tooltip-border, rgba(128, 128, 128, 0.2));
+    background: var(--tour-tooltip-bg, rgba(255, 255, 255, 0.7));
+    backdrop-filter: blur(12px) saturate(150%);
+    -webkit-backdrop-filter: blur(12px) saturate(150%);
+    box-shadow: var(--tour-tooltip-shadow, 0 4px 6px rgba(0, 0, 0, 0.05));
+    color: var(--tour-tooltip-color, #1e293b);
+  }
+
+  .tour-tooltip:hover {
+    box-shadow: var(--tour-tooltip-shadow-hover, 0 8px 12px rgba(0, 0, 0, 0.1));
+  }
+
+  :is(.dark, [data-theme="dark"]) .tour-tooltip {
+    background: var(--tour-tooltip-bg-dark, rgba(30, 30, 30, 0.5));
+    border-color: var(--tour-tooltip-border-dark, rgba(255, 255, 255, 0.1));
+    box-shadow: var(--tour-tooltip-shadow-dark, 0 4px 6px rgba(0, 0, 0, 0.2));
+    color: var(--tour-tooltip-color-dark, #e2e8f0);
+  }
+
+  :is(.dark, [data-theme="dark"]) .tour-tooltip:hover {
+    box-shadow: var(--tour-tooltip-shadow-hover-dark, 0 8px 12px rgba(0, 0, 0, 0.3));
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .tour-tooltip {
+      background: var(--tour-tooltip-bg-dark, rgba(30, 30, 30, 0.5));
+      border-color: var(--tour-tooltip-border-dark, rgba(255, 255, 255, 0.1));
+      box-shadow: var(--tour-tooltip-shadow-dark, 0 4px 6px rgba(0, 0, 0, 0.2));
+      color: var(--tour-tooltip-color-dark, #e2e8f0);
+    }
+    .tour-tooltip:hover {
+      box-shadow: var(--tour-tooltip-shadow-hover-dark, 0 8px 12px rgba(0, 0, 0, 0.3));
+    }
+  }
+}
+
+.tour-error {
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+/* ── Tooltip layout ────────────────────────────────────────────────── */
+
+.tour-tooltip-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(128, 128, 128, 0.15);
+}
+
+.tour-tooltip-title-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-align: left;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  outline: none;
+}
+
+.tour-tooltip-caret {
+  opacity: 0.5;
+  font-size: 0.75rem;
+  transition: transform 0.15s ease;
+}
+
+.tour-tooltip-skip-btn {
+  font-size: 0.75rem;
+  opacity: 0.5;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+}
+
+.tour-tooltip-skip-btn:hover {
+  opacity: 1;
+}
+
+.tour-tooltip-selector-area {
+  padding: 0 1rem 0.75rem;
+  border-bottom: 1px solid rgba(128, 128, 128, 0.15);
+}
+
+.tour-tooltip-body-area {
+  padding: 0 1rem;
+}
+
+.tour-tooltip-hint {
+  padding-top: 0.75rem;
+  font-size: 0.75rem;
+  opacity: 0.7;
+}
+
+.tour-tooltip-body {
+  padding: 0.75rem 0;
+  font-size: 0.875rem;
+  opacity: 0.8;
+  white-space: pre-line;
+  line-height: 1.5;
+}
+
+.tour-tooltip-media {
+  padding-bottom: 0.75rem;
+}
+
+.tour-tooltip-media img,
+.tour-tooltip-media video {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(128, 128, 128, 0.15);
+}
+
+.tour-tooltip-branches {
+  padding: 0.75rem 1rem 1rem;
+  border-top: 1px solid rgba(128, 128, 128, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.tour-tooltip-branch-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.55;
+}
+
+.tour-tooltip-branch-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.tour-tooltip-branch-item {
+  appearance: none;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.65rem 0.85rem;
+  border-radius: 0.6rem;
+  border: 1px solid rgba(128, 128, 128, 0.22);
+  background: linear-gradient(
+    135deg,
+    rgba(var(--tour-accent, 99, 102, 241), 0.06),
+    rgba(var(--tour-accent, 99, 102, 241), 0.02) 55%,
+    transparent
+  );
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.18s ease, background 0.18s ease, transform 0.12s ease, box-shadow 0.18s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.tour-tooltip-branch-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(
+    to bottom,
+    rgba(var(--tour-accent, 99, 102, 241), 0.9),
+    rgba(var(--tour-accent, 99, 102, 241), 0.3)
+  );
+  opacity: 0;
+  transform: scaleY(0.4);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.tour-tooltip-branch-item:hover {
+  border-color: rgba(var(--tour-accent, 99, 102, 241), 0.55);
+  background: linear-gradient(
+    135deg,
+    rgba(var(--tour-accent, 99, 102, 241), 0.14),
+    rgba(var(--tour-accent, 99, 102, 241), 0.04) 60%,
+    transparent
+  );
+  box-shadow: 0 4px 14px -8px rgba(var(--tour-accent, 99, 102, 241), 0.5);
+}
+
+.tour-tooltip-branch-item:hover::before {
+  opacity: 1;
+  transform: scaleY(1);
+}
+
+.tour-tooltip-branch-item:active {
+  transform: translateY(1px);
+}
+
+.tour-tooltip-branch-item:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.tour-tooltip-branch-item:disabled:hover {
+  border-color: rgba(128, 128, 128, 0.22);
+  background: linear-gradient(
+    135deg,
+    rgba(var(--tour-accent, 99, 102, 241), 0.06),
+    rgba(var(--tour-accent, 99, 102, 241), 0.02) 55%,
+    transparent
+  );
+  box-shadow: none;
+}
+
+.tour-tooltip-branch-item:disabled:hover::before {
+  opacity: 0;
+}
+
+.tour-tooltip-branch-item-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.tour-tooltip-branch-item-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  line-height: 1.3;
+  color: inherit;
+}
+
+.tour-tooltip-branch-item-description {
+  font-size: 0.72rem;
+  line-height: 1.35;
+  opacity: 0.62;
+}
+
+.tour-tooltip-branch-item-chevron {
+  flex-shrink: 0;
+  font-size: 0.95rem;
+  opacity: 0.45;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.tour-tooltip-branch-item:hover .tour-tooltip-branch-item-chevron {
+  opacity: 0.9;
+  transform: translateX(3px);
+}
+
+.tour-tooltip-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  border-top: 1px solid rgba(128, 128, 128, 0.15);
+}
+
+.tour-tooltip-counter {
+  font-size: 0.75rem;
+  opacity: 0.5;
+}
+
+.tour-tooltip-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* ── Buttons ───────────────────────────────────────────────────────── */
+
+.tour-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid rgba(128, 128, 128, 0.25);
+  background: transparent;
+  color: inherit;
+  opacity: 0.8;
+  transition: opacity 0.15s, background 0.15s;
+}
+
+.tour-btn:hover:not(:disabled) {
+  opacity: 1;
+  background: rgba(128, 128, 128, 0.1);
+}
+
+.tour-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.tour-btn-primary {
+  background: rgba(var(--tour-accent, 59, 130, 246), 1);
+  color: #fff;
+  border-color: rgba(var(--tour-accent, 59, 130, 246), 1);
+  font-weight: 600;
+  opacity: 1;
+}
+
+.tour-btn-primary:hover:not(:disabled) {
+  background: rgba(var(--tour-accent, 59, 130, 246), 0.85);
+}
+
+.tour-btn-primary:disabled {
+  background: rgba(128, 128, 128, 0.2);
+  color: rgba(128, 128, 128, 0.6);
+  border-color: transparent;
+}
+
+.tour-btn-secondary {
+  /* inherits base .tour-btn styles */
+}
+
+/* ── Built-in step selector dropdown ───────────────────────────────── */
+
+.tour-dropdown {
+  position: relative;
+  width: 100%;
+}
+
+.tour-dropdown-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 2rem;
+  padding: 0 0.625rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(128, 128, 128, 0.25);
+  background: rgba(0, 0, 0, 0.15);
+  color: inherit;
+  font-size: 0.75rem;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.tour-dropdown-trigger:hover {
+  border-color: rgba(128, 128, 128, 0.4);
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.tour-dropdown-trigger-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  text-align: left;
+}
+
+.tour-dropdown-caret {
+  opacity: 0.4;
+  font-size: 0.65rem;
+  transform: rotate(180deg);
+  margin-left: 0.5rem;
+}
+
+.tour-dropdown-panel {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 10;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(128, 128, 128, 0.2);
+  background: rgba(15, 23, 42, 0.92);
+  backdrop-filter: blur(16px) saturate(150%);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+}
+
+.tour-dropdown-search-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.5rem 0.625rem;
+  border-bottom: 1px solid rgba(128, 128, 128, 0.15);
+}
+
+.tour-dropdown-search-icon {
+  opacity: 0.4;
+  font-size: 0.8rem;
+  flex-shrink: 0;
+}
+
+.tour-dropdown-search {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: inherit;
+  font-size: 0.75rem;
+  font-family: inherit;
+}
+
+.tour-dropdown-search::placeholder {
+  color: rgba(148, 163, 184, 0.5);
+}
+
+.tour-dropdown-list {
+  max-height: 240px;
+  overflow-y: auto;
+  padding: 0.25rem;
+}
+
+.tour-dropdown-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.tour-dropdown-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.tour-dropdown-list::-webkit-scrollbar-thumb {
+  background: rgba(128, 128, 128, 0.3);
+  border-radius: 2px;
+}
+
+.tour-dropdown-empty {
+  padding: 0.75rem 0.625rem;
+  font-size: 0.75rem;
+  color: rgba(148, 163, 184, 0.6);
+  text-align: center;
+}
+
+.tour-dropdown-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0.375rem 0.5rem;
+  border-radius: 0.375rem;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font-size: 0.75rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.1s;
+  font-family: inherit;
+  gap: 0.375rem;
+}
+
+.tour-dropdown-item:hover {
+  background: rgba(128, 128, 128, 0.12);
+}
+
+.tour-dropdown-item-active {
+  background: rgba(99, 102, 241, 0.15);
+  color: rgb(165, 180, 252);
+}
+
+.tour-dropdown-item-active:hover {
+  background: rgba(99, 102, 241, 0.25);
+}
+
+.tour-dropdown-item-label {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tour-dropdown-item-sublabel {
+  font-size: 0.65rem;
+  opacity: 0.5;
+  flex-shrink: 0;
+}
+
+.tour-dropdown-item-check {
+  font-size: 0.7rem;
+  color: rgb(99, 102, 241);
+  flex-shrink: 0;
+}
+
+/* Legacy native select fallback — kept for renderStepSelector consumers */
+.tour-step-selector {
+  width: 100%;
+  height: 2rem;
+  padding: 0 0.5rem;
+  border-radius: 0.375rem;
+  border: 1px solid rgba(128, 128, 128, 0.3);
+  background: transparent;
+  color: inherit;
+  font-size: 0.75rem;
+  cursor: pointer;
+  outline: none;
+}
+
+.tour-step-selector:focus {
+  border-color: rgba(var(--tour-accent, 96, 165, 250), 0.6);
+  box-shadow: 0 0 0 2px rgba(var(--tour-accent, 96, 165, 250), 0.15);
+}

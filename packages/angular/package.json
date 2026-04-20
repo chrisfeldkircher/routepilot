@@ -1,0 +1,27 @@
+{
+  "name": "@routepilot/angular",
+  "version": "0.1.0",
+  "description": "Angular bindings for the RoutePilot guided tour engine.",
+  "license": "MIT",
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "files": [
+    "src"
+  ],
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "peerDependencies": {
+    "@angular/core": ">=16.0.0",
+    "@angular/common": ">=16.0.0",
+    "@angular/forms": ">=16.0.0",
+    "@angular/platform-browser": ">=16.0.0",
+    "@angular/router": ">=16.0.0",
+    "@routepilot/engine": "*",
+    "rxjs": ">=7.0.0"
+  },
+  "devDependencies": {
+    "typescript": "~5.9.0"
+  }
+}

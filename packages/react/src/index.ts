@@ -1,0 +1,95 @@
+// React components
+export { GuidedTourProvider } from './components/GuidedTourProvider';
+export type { GuidedTourProviderProps } from './components/GuidedTourProvider';
+export { default as GuidedTourOverlay } from './components/GuidedTourOverlay';
+export { default as GuidedTourContext } from './components/GuidedTourContext';
+
+// React hooks
+export { useGuidedTour, useGuidedTourActions, useGuidedTourServices, useGuidedTourState } from './hooks/useGuidedTour';
+export { useTourInteractableLocks } from './hooks/useTourInteractableLocks';
+export type { LockState } from './hooks/useTourInteractableLocks';
+export { useTourInteractableState } from './hooks/useTourInteractableState';
+
+// Re-export everything from engine so React users only need one import
+export {
+  TourRegistry,
+  createTourRegistry,
+  TourStateMachine,
+  InMemoryDemoDataBridge,
+  InMemoryEventBridge,
+  createStep,
+  prepareAndClick,
+  toStepSelectorConfig,
+  TourRouteGuard,
+  normalizePath,
+  DEFAULT_CONFIG,
+  mergeConfig,
+  startConfetti,
+  setConfettiScriptUrl,
+  buildDag,
+} from '@routepilot/engine';
+
+export type {
+  TourDebugLogger,
+  DemoDataBridge,
+  EventBridge,
+  TourNavigationAdapter,
+  RouteMode,
+  RoutePolicy,
+  TourEngineConfig,
+  TourTooltipConfig,
+  TourBackdropConfig,
+  TourScrollConfig,
+  TourHighlightConfig,
+  TourConfettiConfig,
+  StepSelectorRenderProps,
+  GuidedTourContextValue,
+  GuidedTourActions,
+  TourDefinition,
+  StepDefinition,
+  StepSceneFactory,
+  StepSelectorConfig,
+  StepTooltipConfig,
+  StepSpotlightConfig,
+  StepBehaviorConfig,
+  StepTargetResolver,
+  StepRuntimeContext,
+  TourMachineSnapshot,
+  TourRunStatus,
+  TourServices,
+  EventController,
+  EventInterceptorOptions,
+  TourEventHandler,
+  DemoDataController,
+  StepContent,
+  StepContentDefinition,
+  StepContentFactoryContext,
+  ConfettiConfig,
+  StepConfig,
+  StepClickRequirements,
+  StepTextInputRequirement,
+  StepInteractablesConfig,
+  StepInteractableRef,
+  StepTransition,
+  StepTransitionOption,
+  StepAutoAdvanceConfig,
+  PreparationScope,
+  PreparationCleanup,
+  PreparationOptions,
+  StepPreparationDefinition,
+  StepLifecycleHook,
+  TourLifecycleContext,
+  StepHistoryEntry,
+  TourSharedState,
+  TourNavigationConfig,
+  NodeId,
+  TourId,
+  StepId,
+  TipPlacement,
+  ClickSelector,
+  ClickRequirementGroup,
+  TourRegistryLike,
+  DagTourNode,
+  DagTourDefinition,
+  DagTourHistory,
+} from '@routepilot/engine';

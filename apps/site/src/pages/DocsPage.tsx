@@ -1,6 +1,80 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Nav } from '../components/Nav';
 import { Footer } from '../components/Footer';
+
+type Framework = 'react' | 'angular';
+const DEFAULT_FRAMEWORK: Framework = 'react';
+const GITHUB_REPO_URL = 'https://github.com/chrisfeldkircher/routepilot';
+const ANGULAR_EXAMPLE_URL = `${GITHUB_REPO_URL}/tree/main/examples/angular`;
+const ANGULAR_TOURS_URL = `${ANGULAR_EXAMPLE_URL}/src/app/tours`;
+
+function isFramework(value: string | null): value is Framework {
+  return value === 'react' || value === 'angular';
+}
+
+const ReactTabIcon = () => (
+  <svg viewBox="-11.5 -10.232 23 20.463" className="w-3.5 h-3.5" fill="currentColor">
+    <circle r="2.05" />
+    <g stroke="currentColor" strokeWidth="1" fill="none">
+      <ellipse rx="11" ry="4.2" />
+      <ellipse rx="11" ry="4.2" transform="rotate(60)" />
+      <ellipse rx="11" ry="4.2" transform="rotate(120)" />
+    </g>
+  </svg>
+);
+
+const AngularTabIcon = () => (
+  <svg viewBox="0 0 250 250" className="w-3.5 h-3.5" fill="currentColor">
+    <path d="M125 30L31.9 63.2l14.2 123.1L125 230l78.9-43.7 14.2-123.1z" opacity="0.5" />
+    <path d="M125 30v22.2-.1V230l78.9-43.7 14.2-123.1L125 30z" opacity="0.7" />
+    <path d="M125 52.1L66.8 182.6h21.7l11.7-29.2h49.4l11.7 29.2H183L125 52.1zm17 83.3h-34l17-40.9 17 40.9z" fill="white" />
+  </svg>
+);
+
+function FrameworkTabs({
+  framework,
+  onChange,
+  react,
+  angular,
+}: {
+  framework: Framework;
+  onChange: (framework: Framework) => void;
+  react: ReactNode;
+  angular: ReactNode;
+}) {
+  return (
+    <div className="mb-6">
+      <div className="flex gap-1 mb-3 bg-surface-container-lowest rounded-lg p-1 w-fit border border-outline-variant/10">
+        <button
+          type="button"
+          onClick={() => onChange('react')}
+          className={`flex items-center gap-1.5 px-4 py-1.5 rounded-md text-xs font-medium transition-colors ${
+            framework === 'react'
+              ? 'bg-primary/15 text-primary'
+              : 'text-on-surface-variant hover:text-white'
+          }`}
+        >
+          <ReactTabIcon />
+          React
+        </button>
+        <button
+          type="button"
+          onClick={() => onChange('angular')}
+          className={`flex items-center gap-1.5 px-4 py-1.5 rounded-md text-xs font-medium transition-colors ${
+            framework === 'angular'
+              ? 'bg-primary/15 text-primary'
+              : 'text-on-surface-variant hover:text-white'
+          }`}
+        >
+          <AngularTabIcon />
+          Angular
+        </button>
+      </div>
+      {framework === 'react' ? react : angular}
+    </div>
+  );
+}
 
 const sections = [
   { id: 'getting-started', label: 'Getting Started' },
@@ -17,7 +91,7 @@ const sections = [
   { id: 'conditional-steps', label: 'Conditional Steps' },
   { id: 'transitions', label: 'Transitions & Branching' },
   { id: 'navigation-config', label: 'Navigation Config' },
-  { id: 'hooks', label: 'Hooks' },
+  { id: 'hooks', label: 'Hooks & Services' },
   { id: 'events', label: 'Event System' },
   { id: 'tooltip-config', label: 'Tooltip & Overlay' },
   { id: 'spotlight', label: 'Spotlight & Highlight' },
@@ -36,9 +110,41 @@ function scrollTo(id: string) {
 export function DocsPage() {
   const [activeSection, setActiveSection] = useState('getting-started');
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Keep all framework tabs in sync through the URL so links can preselect a stack.
+  const framework = useMemo(() => {
+    const params = new URLSearchParams(location.search);
+    const value = params.get('framework');
+    return isFramework(value) ? value : DEFAULT_FRAMEWORK;
+  }, [location.search]);
+
+  const setFramework = useCallback(
+    (next: Framework) => {
+      const params = new URLSearchParams(location.search);
+      params.set('framework', next);
+      navigate(
+        {
+          pathname: location.pathname,
+          search: `?${params.toString()}`,
+          hash: location.hash,
+        },
+        { replace: true },
+      );
+    },
+    [location.hash, location.pathname, location.search, navigate],
+  );
 
   useEffect(() => {
-    window.scrollTo(0, 0);
+    const hash = window.location.hash.replace('#', '');
+    if (hash) {
+      requestAnimationFrame(() => {
+        document.getElementById(hash)?.scrollIntoView({ behavior: 'smooth' });
+      });
+    } else {
+      window.scrollTo(0, 0);
+    }
   }, []);
 
   useEffect(() => {
@@ -64,7 +170,6 @@ export function DocsPage() {
   return (
     <>
       <Nav />
-      {/* Mobile sidebar toggle */}
       <button
         type="button"
         onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -74,7 +179,6 @@ export function DocsPage() {
         <span className="material-symbols-outlined">{sidebarOpen ? 'close' : 'menu_book'}</span>
       </button>
 
-      {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div
           className="lg:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-sm"
@@ -110,60 +214,395 @@ export function DocsPage() {
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-headline font-bold text-white mb-4">Documentation</h1>
             <p className="text-on-surface-variant text-base sm:text-lg">
               Everything you need to build guided tours, onboarding flows, error recovery
-              wizards, and interactive documentation with <Code>@routepilot/core</Code>.
+              wizards, and interactive documentation with routePilot.
+              Available for <Code>React</Code> and <Code>Angular</Code>.
             </p>
+            <div className="mt-6 rounded-2xl border border-outline-variant/15 bg-surface-container-lowest/70 p-4 sm:p-5">
+              <p className="text-xs font-mono uppercase tracking-[0.2em] text-tertiary mb-2">
+                Current framework
+              </p>
+              <p className="text-sm sm:text-base text-on-surface-variant leading-relaxed">
+                The framework switchers on this page are synced. Links from{' '}
+                <Code>Works with your stack</Code> preselect the matching integration,
+                and opening <Code>/docs</Code> directly defaults to <Code>react</Code>.
+                The Angular walkthrough mirrors the example app in{' '}
+                <a
+                  href={ANGULAR_EXAMPLE_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary hover:underline"
+                >
+                  examples/angular
+                </a>
+                , including the tour files under{' '}
+                <a
+                  href={ANGULAR_TOURS_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary hover:underline"
+                >
+                  src/app/tours
+                </a>
+                .
+              </p>
+            </div>
           </header>
 
-          {/* ── Getting Started ───────────────────────────────────── */}
           <Section id="getting-started" title="Getting Started">
             <P>Install the package with your preferred package manager:</P>
-            <CodeBlock>{`npm install @routepilot/core`}</CodeBlock>
-            <P>
-              Then wrap your app with <Code>GuidedTourProvider</Code> and render
-              the <Code>GuidedTourOverlay</Code> to get the default tour UI:
-            </P>
-            <CodeBlock>{`import { GuidedTourProvider, GuidedTourOverlay } from '@routepilot/core';
-import '@routepilot/core/style.css';
+            <FrameworkTabs
+              framework={framework}
+              onChange={setFramework}
+              react={<>
+                <CodeBlock>{`npm install @routepilot/react`}</CodeBlock>
+                <H3>What to create</H3>
+                <P>
+                  A typical React integration needs three things: a root mount for the
+                  provider and overlay, one or more tour definition files, and a place
+                  in your UI that starts a tour.
+                </P>
+                <CodeBlock>{`src/
+  main.tsx
+  App.tsx
+  tours/
+    onboarding.tour.ts
+    faq.tour.ts        // optional
+    bridges.ts         // optional custom demo/event bridges
+  components/
+    TourLauncher.tsx   // optional`}</CodeBlock>
+                <P>
+                  Mount routePilot once in the app shell so the overlay can sit on
+                  top of every route in your existing application:
+                </P>
+                <CodeBlock>{`import { BrowserRouter, useLocation, useNavigate } from 'react-router-dom';
+import { GuidedTourProvider, GuidedTourOverlay } from '@routepilot/react';
+import '@routepilot/engine/tour.css';
+import { onboardingTour } from './tours/onboarding.tour';
 
-function App() {
+function TourRoot() {
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
+
   return (
-    <GuidedTourProvider>
-      <GuidedTourOverlay />
+    <GuidedTourProvider
+      tours={[onboardingTour]}
+      location={pathname}
+      navigation={{
+        getPath: () => pathname,
+        navigate: (path, opts) => navigate(path, opts),
+      }}
+    >
       <YourApp />
+      <GuidedTourOverlay />
     </GuidedTourProvider>
   );
 }`}</CodeBlock>
+                <P>
+                  Your routed screens do not need special wrappers. In practice, the
+                  only tour-specific additions inside feature code are stable selectors
+                  such as <Code>data-tour</Code> attributes and whatever button or menu
+                  item starts <Code>actions.start()</Code>.
+                </P>
+              </>}
+              angular={<>
+                <CodeBlock>{`npm install @routepilot/engine @routepilot/angular`}</CodeBlock>
+                <H3>What to create</H3>
+                <P>
+                  The Angular setup maps cleanly onto a standalone app: configure the
+                  tour service at the root, mount the overlay once in the root template,
+                  and keep tour definitions in a dedicated <Code>tours/</Code> folder.
+                </P>
+                <CodeBlock>{`src/app/
+  app.config.ts
+  app.component.ts
+  app.routes.ts
+  pages/
+    dashboard.component.ts
+    settings.component.ts
+  tours/
+    onboarding.tour.ts
+    faq.tour.ts
+    error-recovery.tour.ts
+    interactive-docs.tour.ts
+    bridges.ts`}</CodeBlock>
+                <P>
+                  The Angular example in this repo follows exactly that layout. See{' '}
+                  <a
+                    href={ANGULAR_EXAMPLE_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary hover:underline"
+                  >
+                    examples/angular
+                  </a>{' '}
+                  and the tours folder at{' '}
+                  <a
+                    href={ANGULAR_TOURS_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary hover:underline"
+                  >
+                    examples/angular/src/app/tours
+                  </a>
+                  .
+                </P>
+                <P>
+                  Configure the tours in <Code>app.config.ts</Code> and mount the
+                  overlay in <Code>app.component.ts</Code>:
+                </P>
+                <CodeBlock>{`// app.config.ts
+import { ApplicationConfig } from '@angular/core';
+import { provideRouter } from '@angular/router';
+import { GUIDED_TOUR_CONFIG } from '@routepilot/angular';
+import { routes } from './app.routes';
+import { onboardingTour } from './tours/onboarding.tour';
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideRouter(routes),
+    {
+      provide: GUIDED_TOUR_CONFIG,
+      useValue: {
+        tours: [onboardingTour],
+      },
+    },
+  ],
+};`}</CodeBlock>
+                <CodeBlock>{`// app.component.ts
+import { Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+import {
+  GuidedTourOverlayComponent,
+  TourRouterAdapterService,
+} from '@routepilot/angular';
+
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  imports: [RouterOutlet, GuidedTourOverlayComponent],
+  template: \`
+    <router-outlet />
+    <rp-guided-tour-overlay />
+  \`,
+})
+export class AppComponent {
+  // Inject the router adapter to connect the tour engine to Angular Router
+  constructor(private _router: TourRouterAdapterService) {}
+}`}</CodeBlock>
+                <P>
+                  That is the minimum viable mount. The <Code>GuidedTourService</Code>
+                  is provided at root automatically, the router adapter syncs the
+                  current path, and the overlay stays above your existing routed app
+                  without requiring page-level wrappers.
+                </P>
+              </>}
+            />
+
+            <H3>Complete setup flow</H3>
             <P>
-              That's the minimum setup. The provider creates the tour state machine,
-              registry, and services. The overlay renders the tooltip, backdrop, and
-              navigation controls.
+              A full routePilot integration usually follows the same sequence in both
+              frameworks:
+            </P>
+            <ol className="list-decimal list-inside text-on-surface-variant space-y-2 mb-6 ml-2">
+              <li>Install the framework package and import <Code>@routepilot/engine/tour.css</Code>.</li>
+              <li>Mount the provider or service once at the application root together with the overlay.</li>
+              <li>Register your tours, either directly from the root config or through a registry.</li>
+              <li>Add stable selectors to the real UI you want to target.</li>
+              <li>Wire a trigger that starts the tour from a button, menu, docs page, or help center.</li>
+              <li>Optionally inject custom bridges if demo data or events should flow through your own store or bus instead of the in-memory defaults.</li>
+            </ol>
+
+            <H3>What each setup part gets you</H3>
+            <PropTable
+              rows={[
+                ['Provider / GuidedTourService', 'Required', 'Owns the tour state machine, shared state, services, and runtime lifecycle for the whole app.'],
+                ['Overlay', 'Required', 'Renders the tooltip, backdrop, spotlight, buttons, step picker, and keyboard handling on top of your existing UI.'],
+                ['Tours / Registry', 'Required', 'Gives you named tours you can start by ID and keeps definitions centralized instead of scattering them through components.'],
+                ['Router adapter', 'Required for route-aware tours', 'Enables route navigation, route guards, and steps that target pages other than the current one.'],
+                ['Stable selectors', 'Required', 'Give the engine durable DOM anchors so steps survive normal app refactors and re-renders.'],
+                ['Launch trigger', 'Required', 'Connects routePilot to a real user entry point such as onboarding, contextual help, FAQ, or docs.'],
+                ['demoBridge', 'Optional', 'Only needed when demo/preparation state should go through your own store or fixture layer instead of the built-in in-memory bridge.'],
+                ['eventBridge', 'Optional', 'Only needed when tour events should go through your own event bus instead of the built-in in-memory bridge.'],
+              ]}
+            />
+
+            <H3>Add stable selectors</H3>
+            <P>
+              routePilot works best when the elements you target expose stable
+              selectors. In most apps that means <Code>data-tour</Code> attributes on
+              existing UI, not special wrapper components:
+            </P>
+            <CodeBlock>{`<button data-tour="create-project-btn">Create project</button>
+<aside data-tour="billing-sidebar">…</aside>
+<input data-tour="invite-email-input" />`}</CodeBlock>
+
+            <H3>Start a tour from your UI</H3>
+            <FrameworkTabs
+              framework={framework}
+              onChange={setFramework}
+              react={<>
+                <CodeBlock>{`import { useGuidedTourActions } from '@routepilot/react';
+
+function TourLauncher() {
+  const actions = useGuidedTourActions();
+
+  return (
+    <button onClick={() => actions.start('onboarding')}>
+      Start onboarding
+    </button>
+  );
+}`}</CodeBlock>
+              </>}
+              angular={<>
+                <CodeBlock>{`import { Component, inject } from '@angular/core';
+import { GuidedTourService } from '@routepilot/angular';
+
+@Component({
+  selector: 'app-tour-launcher',
+  standalone: true,
+  template: \`
+    <button type="button" (click)="start()">
+      Start onboarding
+    </button>
+  \`,
+})
+export class TourLauncherComponent {
+  private readonly tour = inject(GuidedTourService);
+
+  start(): void {
+    void this.tour.actions.start('onboarding');
+  }
+}`}</CodeBlock>
+              </>}
+            />
+
+            <H3>Self-hosted assets (GDPR)</H3>
+            <P>
+              routePilot ships no network dependencies of its own — all markup,
+              styles, and logic are served from your origin. If your tooltips
+              use icons or custom fonts, install them via npm rather than
+              loading from a third-party CDN so EU users aren't silently
+              phoned home to Google/Cloudflare:
+            </P>
+            <CodeBlock>{`npm install @fontsource/inter material-symbols`}</CodeBlock>
+            <CodeBlock>{`/* styles.css */
+@import '@fontsource/inter/400.css';
+@import 'material-symbols/outlined.css';`}</CodeBlock>
+            <P>
+              The <Code>confetti</Code> helper (see the Confetti section) loads{' '}
+              <Code>canvas-confetti</Code> from jsDelivr by default; point
+              <Code>confetti.scriptUrl</Code> at a self-hosted copy to avoid
+              the CDN request entirely.
             </P>
           </Section>
 
-          {/* ── Provider Setup ────────────────────────────────────── */}
           <Section id="provider-setup" title="Provider Setup">
-            <P>
-              <Code>GuidedTourProvider</Code> accepts several optional props to
-              customize behavior:
-            </P>
-            <PropTable
-              rows={[
-                ['tours', 'TourDefinition[]', 'Pre-register tour definitions on mount'],
-                ['registry', 'TourRegistry', 'Custom registry instance (created via createTourRegistry)'],
-                ['location', 'string', 'Current pathname from your router — enables route-aware steps'],
-                ['navigation', 'TourNavigationAdapter', 'Router integration for auto-navigation'],
-                ['config', 'TourEngineConfig', 'Global config overrides (tooltip, backdrop, scroll, etc.)'],
-                ['debug', 'boolean', 'Enable console debug logging'],
-                ['demoBridge', 'DemoDataBridge', 'Custom demo data store (defaults to in-memory)'],
-                ['eventBridge', 'EventBridge', 'Custom event bus (defaults to in-memory)'],
-              ]}
-            />
-            <H3>Router integration</H3>
-            <P>
-              To enable route-aware steps (auto-navigation, route guards), pass your
-              router's current path and a navigation adapter:
-            </P>
-            <CodeBlock>{`import { useLocation, useNavigate } from 'react-router-dom';
+            <FrameworkTabs
+              framework={framework}
+              onChange={setFramework}
+              react={<>
+                <P>
+                  <Code>GuidedTourProvider</Code> accepts several optional props to
+                  customize behavior:
+                </P>
+                <PropTable
+                  rows={[
+                    ['tours', 'TourDefinition[]', 'Pre-register tour definitions on mount'],
+                    ['registry', 'TourRegistry', 'Custom registry instance (created via createTourRegistry)'],
+                    ['location', 'string', 'Current pathname from your router — enables route-aware steps'],
+                    ['navigation', 'TourNavigationAdapter', 'Router integration for auto-navigation'],
+                    ['config', 'TourEngineConfig', 'Global config overrides (tooltip, backdrop, scroll, etc.)'],
+                    ['debug', 'boolean', 'Enable console debug logging'],
+                    ['demoBridge', 'DemoDataBridge', 'Custom demo data store (defaults to in-memory)'],
+                    ['eventBridge', 'EventBridge', 'Custom event bus (defaults to in-memory)'],
+                  ]}
+                />
+                <H3>Mount it in the app shell, not per page</H3>
+                <P>
+                  In an existing React app, keep the provider near your router and let
+                  the overlay render once for the whole application. That keeps route
+                  transitions, modals, and shared state consistent across the entire
+                  tour.
+                </P>
+                <CodeBlock>{`function AppShell() {
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
+
+  return (
+    <GuidedTourProvider
+      tours={[onboardingTour, faqTour]}
+      location={pathname}
+      navigation={{
+        getPath: () => pathname,
+        navigate: (path, opts) => navigate(path, opts),
+      }}
+    >
+      <AppLayout />
+      <GuidedTourOverlay />
+    </GuidedTourProvider>
+  );
+}`}</CodeBlock>
+                <H3>Tour registration and bridges</H3>
+                <P>
+                  You can let the provider register tours from the <Code>tours</Code>
+                  prop, or pass a prebuilt registry. The two bridge props are optional:
+                  if omitted, routePilot uses the built-in in-memory implementations.
+                </P>
+                <CodeBlock>{`import {
+  GuidedTourProvider,
+  GuidedTourOverlay,
+  createTourRegistry,
+  InMemoryDemoDataBridge,
+  InMemoryEventBridge,
+} from '@routepilot/react';
+
+const registry = createTourRegistry([onboardingTour, faqTour]);
+const demoBridge = new InMemoryDemoDataBridge();
+const eventBridge = new InMemoryEventBridge();
+
+function AppShell() {
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
+
+  return (
+    <GuidedTourProvider
+      registry={registry}
+      demoBridge={demoBridge}
+      eventBridge={eventBridge}
+      location={pathname}
+      navigation={{
+        getPath: () => pathname,
+        navigate: (path, opts) => navigate(path, opts),
+      }}
+    >
+      <AppLayout />
+      <GuidedTourOverlay />
+    </GuidedTourProvider>
+  );
+}`}</CodeBlock>
+                <P>
+                  Use <Code>demoBridge</Code> when preparations should talk to your own
+                  demo-state layer or fixture store. Use <Code>eventBridge</Code> when
+                  the tour event system should run through your own event bus.
+                </P>
+                <H3>When custom bridges are actually needed</H3>
+                <P>
+                  Most integrations do <strong>not</strong> need custom bridges. If
+                  your tours are self-contained and your preparations only touch the DOM
+                  or local tour-owned demo state, the built-in in-memory bridges are the
+                  right default.
+                </P>
+                <ul className="list-disc list-inside text-on-surface-variant space-y-2 mb-6 ml-2">
+                  <li>Use a custom <Code>demoBridge</Code> when your preparations need to read/write a real fixture layer, Zustand/Redux store, NgRx store, shared mock backend, or persisted demo state.</li>
+                  <li>Use a custom <Code>eventBridge</Code> when your app already has an event bus and you want tour events to participate in that same system instead of living inside routePilot only.</li>
+                  <li>If you are building a live product tour, contextual docs flow, or FAQ tour that does not need shared external state, skip both and stay on the defaults.</li>
+                </ul>
+                <H3>Router integration</H3>
+                <P>
+                  To enable route-aware steps (auto-navigation, route guards), pass your
+                  router's current path and a navigation adapter:
+                </P>
+                <CodeBlock>{`import { useLocation, useNavigate } from 'react-router-dom';
 
 function App() {
   const { pathname } = useLocation();
@@ -182,16 +621,158 @@ function App() {
     </GuidedTourProvider>
   );
 }`}</CodeBlock>
+              </>}
+              angular={<>
+                <P>
+                  Provide <Code>GUIDED_TOUR_CONFIG</Code> at the application root to
+                  configure the tour engine:
+                </P>
+                <PropTable
+                  rows={[
+                    ['tours', 'TourDefinition[]', 'Pre-register tour definitions'],
+                    ['config', 'TourEngineConfig', 'Global config overrides (tooltip, backdrop, scroll, etc.)'],
+                    ['debug', 'boolean', 'Enable console debug logging'],
+                    ['demoBridge', 'DemoDataBridge', 'Custom demo data store (defaults to in-memory)'],
+                    ['eventBridge', 'EventBridge', 'Custom event bus (defaults to in-memory)'],
+                  ]}
+                />
+                <H3>Mount it above the routed app</H3>
+                <P>
+                  The recommended Angular pattern is to keep your existing shell
+                  component intact and append <Code>rp-guided-tour-overlay</Code> once
+                  at the root. The example app does exactly this while still rendering
+                  navigation, header, footer, and routed pages normally.
+                </P>
+                <CodeBlock>{`@Component({
+  selector: 'app-root',
+  standalone: true,
+  imports: [RouterOutlet, GuidedTourOverlayComponent],
+  template: \`
+    <div class="site-shell">
+      <router-outlet />
+    </div>
+    <rp-guided-tour-overlay />
+  \`,
+})
+export class AppComponent {
+  constructor(private _router: TourRouterAdapterService) {}
+}`}</CodeBlock>
+                <CodeBlock>{`// app.config.ts
+import {
+  GUIDED_TOUR_CONFIG,
+  InMemoryDemoDataBridge,
+  InMemoryEventBridge,
+} from '@routepilot/angular';
+
+const demoBridge = new InMemoryDemoDataBridge();
+const eventBridge = new InMemoryEventBridge();
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideRouter(routes),
+    {
+      provide: GUIDED_TOUR_CONFIG,
+      useValue: {
+        tours: [onboardingTour, faqTour],
+        demoBridge,
+        eventBridge,
+        debug: true,
+        config: {
+          tooltip: { buttonLabels: { next: 'Continue' } },
+        },
+      },
+    },
+  ],
+};`}</CodeBlock>
+                <P>
+                  Angular always creates a registry internally and pre-registers the
+                  <Code>tours</Code> you provide here. The bridge slots are optional
+                  and only needed when you want to replace the default in-memory demo
+                  state or event bus.
+                </P>
+                <H3>When custom bridges are actually needed</H3>
+                <P>
+                  Leave both bridge slots out unless you already have a concrete system
+                  they should integrate with. The built-in bridges are enough for the
+                  common case: isolated tours, local preparations, and routePilot-owned
+                  event flow.
+                </P>
+                <ul className="list-disc list-inside text-on-surface-variant space-y-2 mb-6 ml-2">
+                  <li>Choose a custom <Code>demoBridge</Code> when preparations should read/write an existing Angular state layer, fixture service, or shared mock backend.</li>
+                  <li>Choose a custom <Code>eventBridge</Code> when tour events should connect to an existing RxJS/event-bus style infrastructure used elsewhere in the app.</li>
+                  <li>If you do not already know why you need a custom bridge, you almost certainly do not need one yet.</li>
+                </ul>
+                <H3>Router integration</H3>
+                <P>
+                  Inject <Code>TourRouterAdapterService</Code> in your root component.
+                  It automatically bridges the Angular Router with the tour engine — no
+                  manual path or adapter wiring needed:
+                </P>
+                <CodeBlock>{`import { TourRouterAdapterService } from '@routepilot/angular';
+
+@Component({ /* ... */ })
+export class AppComponent {
+  constructor(private _router: TourRouterAdapterService) {}
+}`}</CodeBlock>
+                <P>
+                  The adapter listens to <Code>NavigationEnd</Code> events and keeps the
+                  tour engine's current path in sync. Route enforcement, auto-navigation,
+                  and guard mode all work automatically.
+                </P>
+              </>}
+            />
+
+            <H3>Custom bridge shape</H3>
+            <P>
+              When you do need custom bridges, these are the two interfaces you
+              implement. They sit behind <Code>ctx.services.demo</Code> and{' '}
+              <Code>ctx.services.events</Code>:
+            </P>
+            <CodeBlock>{`import type { DemoDataBridge, EventBridge } from '@routepilot/engine';
+
+export const demoBridge: DemoDataBridge = {
+  set(scope, key, value) {
+    myDemoStore.set(scope.tourId, key, value);
+  },
+  remove(scope, key) {
+    myDemoStore.remove(scope.tourId, key);
+  },
+  clear(scope, namespace) {
+    myDemoStore.clear(scope.tourId, namespace);
+  },
+  read(scope, key) {
+    return myDemoStore.read(scope.tourId, key);
+  },
+};
+
+export const eventBridge: EventBridge = {
+  emit(scope, event, payload) {
+    myEventBus.emit(event, payload);
+  },
+  intercept(scope, event, handler, options) {
+    return myEventBus.on(event, handler, options);
+  },
+  clear(scope, event) {
+    myEventBus.clear(event);
+  },
+  enable() {},
+  disable() {},
+};`}</CodeBlock>
+            <P>
+              In practice: <Code>demoBridge</Code> is about <em>state storage</em>,
+              while <Code>eventBridge</Code> is about <em>message transport</em>. If
+              you need neither external storage nor external transport, keep the
+              defaults.
+            </P>
           </Section>
 
-          {/* ── Tour Definition ───────────────────────────────────── */}
           <Section id="tour-definition" title="Tour Definition">
             <P>
               A <Code>TourDefinition</Code> is the top-level object that describes an
               entire tour. It contains an array of steps, optional lifecycle hooks,
               navigation config, and more.
             </P>
-            <CodeBlock>{`import type { TourDefinition } from '@routepilot/core';
+            <CodeBlock>{`import type { TourDefinition } from '@routepilot/engine';
 
 const onboardingTour: TourDefinition = {
   id: 'onboarding',
@@ -225,7 +806,6 @@ const onboardingTour: TourDefinition = {
             />
           </Section>
 
-          {/* ── Step Definition ───────────────────────────────────── */}
           <Section id="step-definition" title="Step Definition">
             <P>
               Each step describes what to show, where to point, and how the user
@@ -301,14 +881,13 @@ const onboardingTour: TourDefinition = {
             </P>
           </Section>
 
-          {/* ── createStep() ──────────────────────────────────────── */}
           <Section id="create-step" title="createStep()">
             <P>
               A convenience factory for the most common step pattern — a single CSS
               selector target with a title and body. It handles click tracking,
               auto-advance, and text input validation automatically.
             </P>
-            <CodeBlock>{`import { createStep } from '@routepilot/core';
+            <CodeBlock>{`import { createStep } from '@routepilot/react';
 
 const step = createStep(
   'step-id',                           // id
@@ -321,18 +900,25 @@ const step = createStep(
     click: { all: ['[data-tour="target"]'] },
     autoAdvance: true,
     autoAdvanceDelay: 300,
-    preparations: [{
-      id: 'my-prep',
-      scope: 'step',
-      factory: () => {
-        doSetup();
-        return () => doCleanup();
-      },
-    }],
   },
   'next-step-id',                      // next (optional)
   'prev-step-id',                      // previous (optional)
 );`}</CodeBlock>
+            <P>
+              <Code>createStep()</Code> returns a plain <Code>StepDefinition</Code>.
+              For advanced fields like <Code>preparations</Code>, <Code>transitions</Code>,
+              or <Code>chapter</Code>, assign them on the returned object:
+            </P>
+            <CodeBlock>{`step.preparations = [
+  {
+    id: 'my-prep',
+    scope: 'step',
+    factory: () => {
+      doSetup();
+      return () => doCleanup();
+    },
+  },
+];`}</CodeBlock>
             <H3>Full signature</H3>
             <CodeBlock>{`function createStep(
   id: string,
@@ -354,14 +940,14 @@ const step = createStep(
                 ['autoAdvance', 'boolean', 'Auto-advance when click/input requirements are met'],
                 ['autoAdvanceDelay', 'number', 'Delay in ms before auto-advancing (default: 0)'],
                 ['interactables', 'StepInteractablesConfig', 'Control modals/drawers during this step'],
-                ['preparations', 'StepPreparationDefinition[]', 'Setup/teardown logic'],
+                ['setTourAttributes', 'Record<string, string>', 'Write tour-controlled attributes to the document root'],
+                ['allowTourActions', 'string | string[] | Record<string, string>', 'Allow named app actions while the step is active'],
                 ['tipOffset', '{ x?, y? }', 'Pixel offset for tooltip positioning'],
                 ['routeMode', "'navigate' | 'guard' | 'pause'", 'How to handle routing for this step'],
               ]}
             />
           </Section>
 
-          {/* ── Runtime Context ──────────────────────────────────── */}
           <Section id="runtime-context" title="Runtime Context">
             <P>
               The <Code>StepRuntimeContext</Code> (often just <Code>ctx</Code>) is
@@ -434,7 +1020,6 @@ const unsub = ctx.interceptEvent('form:submit', (payload) => {
             />
           </Section>
 
-          {/* ── Preparations ──────────────────────────────────────── */}
           <Section id="preparations" title="Preparations">
             <P>
               Preparations are the setup/teardown system for tour steps. They let you
@@ -504,7 +1089,6 @@ const unsub = ctx.interceptEvent('form:submit', (payload) => {
 }`}</CodeBlock>
           </Section>
 
-          {/* ── Click Gating ────────────────────────────────────── */}
           <Section id="click-gating" title="Click Gating">
             <P>
               Click gating blocks the "Next" button until the user clicks specific
@@ -553,7 +1137,6 @@ const unsub = ctx.interceptEvent('form:submit', (payload) => {
 }`}</CodeBlock>
           </Section>
 
-          {/* ── Text Input Validation ────────────────────────────── */}
           <Section id="text-input" title="Text Input Validation">
             <P>
               Block navigation until the user types a specific value into an input
@@ -583,7 +1166,6 @@ const unsub = ctx.interceptEvent('form:submit', (payload) => {
             />
           </Section>
 
-          {/* ── Auto-Advance ─────────────────────────────────────── */}
           <Section id="auto-advance" title="Auto-Advance">
             <P>
               Steps can automatically advance without user interaction. This is
@@ -634,7 +1216,6 @@ const unsub = ctx.interceptEvent('form:submit', (payload) => {
 )`}</CodeBlock>
           </Section>
 
-          {/* ── Lifecycle Hooks ───────────────────────────────────── */}
           <Section id="lifecycle-hooks" title="Lifecycle Hooks">
             <P>
               Steps have four lifecycle hooks that fire at different points.
@@ -685,7 +1266,6 @@ const unsub = ctx.interceptEvent('form:submit', (payload) => {
 };`}</CodeBlock>
           </Section>
 
-          {/* ── Conditional Steps ─────────────────────────────────── */}
           <Section id="conditional-steps" title="Conditional Steps">
             <P>
               The <Code>when</Code> guard lets you conditionally skip a step based
@@ -725,7 +1305,6 @@ const unsub = ctx.interceptEvent('form:submit', (payload) => {
 }`}</CodeBlock>
           </Section>
 
-          {/* ── Transitions & Branching ──────────────────────────── */}
           <Section id="transitions" title="Transitions & Branching">
             <P>
               By default, steps flow linearly in the order they appear in the
@@ -790,7 +1369,6 @@ const unsub = ctx.interceptEvent('form:submit', (payload) => {
             </P>
           </Section>
 
-          {/* ── Navigation Config ─────────────────────────────────── */}
           <Section id="navigation-config" title="Navigation Config">
             <P>
               The <Code>navigation</Code> field on <Code>TourDefinition</Code>
@@ -814,14 +1392,21 @@ const unsub = ctx.interceptEvent('form:submit', (payload) => {
             </P>
           </Section>
 
-          {/* ── Hooks ─────────────────────────────────────────────── */}
-          <Section id="hooks" title="Hooks">
-            <H3>useGuidedTourActions()</H3>
+          <Section id="hooks" title="Hooks & Services">
             <P>
-              Returns methods to control the tour. This is the hook you'll use
-              most often:
+              Access tour actions, state, and services from your components. The API
+              surface is identical — only the access pattern differs by framework.
             </P>
-            <CodeBlock>{`const actions = useGuidedTourActions();
+            <FrameworkTabs
+              framework={framework}
+              onChange={setFramework}
+              react={<>
+                <H3>useGuidedTourActions()</H3>
+                <P>
+                  Returns methods to control the tour. This is the hook you'll use
+                  most often:
+                </P>
+                <CodeBlock>{`const actions = useGuidedTourActions();
 
 // Start a tour from a definition object
 await actions.startWithDefinition(myTour, {
@@ -843,12 +1428,12 @@ await actions.complete();  // Fires onFinish with status 'completed'
 // Get available transitions from current step
 const transitions = await actions.getAvailableTransitions();`}</CodeBlock>
 
-            <H3>useGuidedTourState()</H3>
-            <P>
-              Returns a reactive snapshot of the tour machine state. Re-renders
-              your component on every state change:
-            </P>
-            <CodeBlock>{`const state = useGuidedTourState();
+                <H3>useGuidedTourState()</H3>
+                <P>
+                  Returns a reactive snapshot of the tour machine state. Re-renders
+                  your component on every state change:
+                </P>
+                <CodeBlock>{`const state = useGuidedTourState();
 
 state.status       // 'idle' | 'preparing' | 'running' | 'paused' | 'completed' | 'error'
 state.tourId       // Current tour ID or null
@@ -859,12 +1444,12 @@ state.canGoBack    // Whether "Back" is available
 state.shared       // ReadonlyMap of shared state
 state.isTransitioning  // True during step transitions`}</CodeBlock>
 
-            <H3>useGuidedTourServices()</H3>
-            <P>
-              Access the service layer — demo data store, event bus, and shared
-              state:
-            </P>
-            <CodeBlock>{`const services = useGuidedTourServices();
+                <H3>useGuidedTourServices()</H3>
+                <P>
+                  Access the service layer — demo data store, event bus, and shared
+                  state:
+                </P>
+                <CodeBlock>{`const services = useGuidedTourServices();
 
 // Demo data
 services.demo.set('key', value);
@@ -877,21 +1462,136 @@ services.events.emit('custom-event', payload);
 services.events.intercept('custom-event', handler);
 services.events.once('custom-event', handler);`}</CodeBlock>
 
-            <H3>useTourInteractableState()</H3>
-            <P>
-              Manages open/close state of modals, drawers, or any togglable
-              component that the tour needs to control:
-            </P>
-            <CodeBlock>{`const { openLocked, closeLocked, setOpen } = useTourInteractableState(
+                <H3>useTourInteractableState()</H3>
+                <P>
+                  Manages open/close state of modals, drawers, or any togglable
+                  component that the tour needs to control:
+                </P>
+                <CodeBlock>{`const { openLocked, closeLocked, setOpen } = useTourInteractableState(
   'my-modal',     // unique ID
   setIsOpen,      // your state setter
 );
 
 // The tour can now open/close this component via step config:
 // config: { interactables: { open: { id: 'my-modal' } } }`}</CodeBlock>
+
+                <H3>Reacting to tour completion</H3>
+                <P>
+                  Watch <Code>state.status</Code> for the <Code>running|preparing
+                  → idle|completed|error</Code> transition to run logic when a
+                  tour ends — for example, returning the user to a landing
+                  route:
+                </P>
+                <CodeBlock>{`const state = useGuidedTourState();
+const navigate = useNavigate();
+const prevRef = useRef(state.status);
+
+useEffect(() => {
+  const prev = prevRef.current;
+  prevRef.current = state.status;
+  const wasActive = prev === 'running' || prev === 'preparing';
+  const isTerminal =
+    state.status === 'idle' ||
+    state.status === 'completed' ||
+    state.status === 'error';
+  if (wasActive && isTerminal) {
+    navigate('/');  // back to the scenario picker, CTA page, etc.
+  }
+}, [state.status, navigate]);`}</CodeBlock>
+              </>}
+              angular={<>
+                <H3>GuidedTourService</H3>
+                <P>
+                  The <Code>GuidedTourService</Code> is the single entry point for
+                  controlling tours in Angular. It replaces all React hooks with one
+                  injectable service:
+                </P>
+                <CodeBlock>{`import { GuidedTourService } from '@routepilot/angular';
+
+@Component({ /* ... */ })
+export class MyComponent {
+  constructor(private tour: GuidedTourService) {}
+
+  startTour() {
+    this.tour.actions.startWithDefinition(myTour, {
+      startNodeId: 'specific-step',
+    });
+  }
+
+  stopTour() {
+    this.tour.actions.stop();
+  }
+}`}</CodeBlock>
+
+                <H3>Actions</H3>
+                <P>
+                  The <Code>actions</Code> property provides the same methods as the
+                  React <Code>useGuidedTourActions()</Code> hook:
+                </P>
+                <CodeBlock>{`// Start a tour
+await this.tour.actions.startWithDefinition(myTour);
+await this.tour.actions.start('onboarding');
+
+// Navigation
+await this.tour.actions.next();
+await this.tour.actions.back();
+await this.tour.actions.goTo('step-id');
+
+// Stop or complete
+await this.tour.actions.stop();
+await this.tour.actions.complete();`}</CodeBlock>
+
+                <H3>Reactive state</H3>
+                <P>
+                  Subscribe to <Code>state$</Code> for reactive updates, or use
+                  <Code>select()</Code> for specific slices:
+                </P>
+                <CodeBlock>{`// Full state observable
+this.tour.state$.subscribe(snapshot => {
+  console.log(snapshot.status, snapshot.nodeId);
+});
+
+// Select specific properties
+this.tour.select(s => s.status).subscribe(status => {
+  console.log('Status changed:', status);
+});
+
+// Synchronous access
+const current = this.tour.state;`}</CodeBlock>
+
+                <H3>Registering tours at runtime</H3>
+                <CodeBlock>{`// Register additional tours after init
+this.tour.registerTours([newTour]);`}</CodeBlock>
+
+                <H3>Reacting to tour completion</H3>
+                <P>
+                  Watch <Code>state$</Code> for the <Code>running|preparing →
+                  idle|completed|error</Code> transition to run logic when a
+                  tour ends — for example, returning the user to a landing
+                  route:
+                </P>
+                <CodeBlock>{`constructor(
+  private tour: GuidedTourService,
+  private router: Router,
+) {
+  let prevStatus = this.tour.state.status;
+  this.tour.state$.subscribe((snapshot) => {
+    const wasActive =
+      prevStatus === 'running' || prevStatus === 'preparing';
+    const isTerminal =
+      snapshot.status === 'idle' ||
+      snapshot.status === 'completed' ||
+      snapshot.status === 'error';
+    if (wasActive && isTerminal) {
+      this.router.navigateByUrl('/');
+    }
+    prevStatus = snapshot.status;
+  });
+}`}</CodeBlock>
+              </>}
+            />
           </Section>
 
-          {/* ── Event System ─────────────────────────────────────── */}
           <Section id="events" title="Event System">
             <P>
               The event system provides a decoupled communication channel between
@@ -900,12 +1600,26 @@ services.events.once('custom-event', handler);`}</CodeBlock>
               system.
             </P>
             <H3>Emitting events</H3>
-            <CodeBlock>{`// From a component
+            <FrameworkTabs
+              framework={framework}
+              onChange={setFramework}
+              react={
+                <CodeBlock>{`// From a component
 const services = useGuidedTourServices();
-services.events.emit('cart:item-added', { productId: '123', qty: 1 });
+services.events.emit('cart:item-added', { productId: '123', qty: 1 });`}</CodeBlock>
+              }
+              angular={
+                <CodeBlock>{`// From a component
+constructor(private tour: GuidedTourService) {}
 
-// From a preparation factory
-factory: (ctx) => {
+emitEvent() {
+  const services = this.tour.createServices(this.tour.state.nodeId);
+  services.events.emit('cart:item-added', { productId: '123', qty: 1 });
+}`}</CodeBlock>
+              }
+            />
+            <P>From a preparation factory (identical across frameworks):</P>
+            <CodeBlock>{`factory: (ctx) => {
   ctx.services.events.emit('data:seeded', { rows: 50 });
   return () => ctx.services.events.emit('data:cleared');
 }`}</CodeBlock>
@@ -935,18 +1649,21 @@ onEnter: (ctx) => {
             </ul>
           </Section>
 
-          {/* ── Tooltip & Overlay ─────────────────────────────────── */}
           <Section id="tooltip-config" title="Tooltip & Overlay">
             <P>
-              <Code>GuidedTourOverlay</Code> renders the complete tour UI: backdrop,
-              spotlight, tooltip with content, navigation buttons, step counter, and
-              step picker. It reads all configuration from the provider.
+              The overlay renders the complete tour UI: backdrop, spotlight, tooltip
+              with content, navigation buttons, step counter, and step picker. It reads
+              all configuration from the provider or service.
             </P>
             <H3>Default button labels</H3>
             <P>
-              Customize button text globally via the provider config:
+              Customize button text globally via configuration:
             </P>
-            <CodeBlock>{`<GuidedTourProvider
+            <FrameworkTabs
+              framework={framework}
+              onChange={setFramework}
+              react={
+                <CodeBlock>{`<GuidedTourProvider
   config={{
     tooltip: {
       defaultWidth: 360,
@@ -963,6 +1680,31 @@ onEnter: (ctx) => {
     scroll: { behavior: 'smooth', block: 'center' },
   }}
 >`}</CodeBlock>
+              }
+              angular={
+                <CodeBlock>{`// app.config.ts
+{
+  provide: GUIDED_TOUR_CONFIG,
+  useValue: {
+    config: {
+      tooltip: {
+        defaultWidth: 360,
+        showStepCounter: true,
+        buttonLabels: {
+          next: 'Next',
+          back: 'Back',
+          skip: 'Skip',
+          finish: 'Finish',
+          close: 'Close Tour',
+        },
+      },
+      backdrop: { opacity: 0.55 },
+      scroll: { behavior: 'smooth', block: 'center' },
+    },
+  },
+}`}</CodeBlock>
+              }
+            />
             <H3>Keyboard shortcuts</H3>
             <P>
               The overlay supports keyboard navigation out of the box:
@@ -974,7 +1716,6 @@ onEnter: (ctx) => {
             </ul>
           </Section>
 
-          {/* ── Spotlight & Highlight ────────────────────────────── */}
           <Section id="spotlight" title="Spotlight & Highlight">
             <P>
               When a step has a target element, the overlay creates a spotlight
@@ -1024,7 +1765,6 @@ onEnter: (ctx) => {
 }`}</CodeBlock>
           </Section>
 
-          {/* ── Inline Markup ─────────────────────────────────────── */}
           <Section id="inline-markup" title="Inline Markup">
             <P>
               Step body text supports lightweight inline markup for highlighting
@@ -1062,7 +1802,6 @@ content: {
 }`}</CodeBlock>
           </Section>
 
-          {/* ── Interactables ─────────────────────────────────────── */}
           <Section id="interactables" title="Interactables">
             <P>
               The interactable system lets the tour control external UI components
@@ -1071,11 +1810,15 @@ content: {
               open.
             </P>
             <H3>1. Register the component</H3>
-            <P>
-              In your modal/drawer component, use the <Code>useTourInteractableState</Code>
-              hook:
-            </P>
-            <CodeBlock>{`function MyDrawer() {
+            <FrameworkTabs
+              framework={framework}
+              onChange={setFramework}
+              react={<>
+                <P>
+                  In your modal/drawer component, use the <Code>useTourInteractableState</Code>
+                  hook:
+                </P>
+                <CodeBlock>{`function MyDrawer() {
   const [isOpen, setIsOpen] = useState(false);
 
   const { openLocked, closeLocked } = useTourInteractableState(
@@ -1094,10 +1837,50 @@ content: {
     </Drawer>
   );
 }`}</CodeBlock>
+              </>}
+              angular={<>
+                <P>
+                  In your modal/drawer component, use the <Code>rpTourInteractableState</Code>
+                  directive:
+                </P>
+                <CodeBlock>{`import { TourInteractableStateDirective } from '@routepilot/angular';
+
+@Component({
+  selector: 'app-my-drawer',
+  standalone: true,
+  imports: [TourInteractableStateDirective],
+  template: \`
+    <div
+      [rpTourInteractableState]="'settings-drawer'"
+      (openChange)="setOpen($event)"
+    >
+      <app-drawer [open]="isOpen" (closed)="onClose()">
+        <!-- ... -->
+      </app-drawer>
+    </div>
+  \`,
+})
+export class MyDrawerComponent {
+  isOpen = false;
+
+  @ViewChild(TourInteractableStateDirective)
+  interactable!: TourInteractableStateDirective;
+
+  setOpen(next: boolean) {
+    this.isOpen = next;
+  }
+
+  onClose() {
+    // Use safeSetOpen to respect tour locks
+    this.interactable.safeSetOpen(false);
+  }
+}`}</CodeBlock>
+              </>}
+            />
             <H3>2. Control it from a step</H3>
             <P>
               Use the <Code>interactables</Code> config to open, close, or lock
-              components during specific steps:
+              components during specific steps (identical across frameworks):
             </P>
             <CodeBlock>{`createStep('drawer-step', '/settings', '[data-tour="field"]',
   'Check this setting',
@@ -1122,7 +1905,6 @@ content: {
             />
           </Section>
 
-          {/* ── Routing ───────────────────────────────────────────── */}
           <Section id="routing" title="Routing">
             <P>
               Each step can declare which route(s) it's valid on. The engine
@@ -1150,16 +1932,44 @@ content: {
             <CodeBlock>{`route: ['/settings', '/settings/general', '/settings/security']`}</CodeBlock>
             <H3>Navigation adapter</H3>
             <P>
-              The engine navigates via the adapter you pass to the provider. It
-              must implement two methods:
+              The engine navigates via an adapter that implements the
+              <Code>TourNavigationAdapter</Code> interface:
             </P>
             <CodeBlock>{`interface TourNavigationAdapter {
   getPath(): string;
   navigate(path: string, options?: { replace?: boolean }): void;
 }`}</CodeBlock>
+            <FrameworkTabs
+              framework={framework}
+              onChange={setFramework}
+              react={<>
+                <P>
+                  Pass the adapter directly to the provider:
+                </P>
+                <CodeBlock>{`<GuidedTourProvider
+  location={pathname}
+  navigation={{
+    getPath: () => pathname,
+    navigate: (path, opts) => navigate(path, opts),
+  }}
+>`}</CodeBlock>
+              </>}
+              angular={<>
+                <P>
+                  The <Code>TourRouterAdapterService</Code> implements this interface
+                  automatically using Angular's <Code>Router</Code>. Just inject it:
+                </P>
+                <CodeBlock>{`import { TourRouterAdapterService } from '@routepilot/angular';
+
+@Component({ /* ... */ })
+export class AppComponent {
+  constructor(private _router: TourRouterAdapterService) {}
+}
+// That's it — path syncing, navigation, and route guards are all automatic.`}</CodeBlock>
+              </>}
+            />
           </Section>
 
-          {/* ── DAG Validation ───────────────────────────────────── */}
           <Section id="dag-validation" title="DAG Validation">
             <P>
               When a tour starts, the engine compiles the <Code>steps</Code> array
@@ -1204,7 +2014,6 @@ interface DagTourNode {
             </P>
           </Section>
 
-          {/* ── Confetti ──────────────────────────────────────────── */}
           <Section id="confetti" title="Confetti">
             <P>
               Tours can trigger a confetti celebration when completed. Enable it
@@ -1237,7 +2046,6 @@ interface DagTourNode {
 >`}</CodeBlock>
           </Section>
 
-          {/* ── Engine Config ─────────────────────────────────────── */}
           <Section id="engine-config" title="Engine Config">
             <P>
               The full <Code>TourEngineConfig</Code> lets you customize every
@@ -1273,12 +2081,22 @@ interface DagTourNode {
   },
 };`}</CodeBlock>
             <P>
-              Pass this to the provider:
+              Pass this to the provider or service configuration:
             </P>
-            <CodeBlock>{`<GuidedTourProvider config={config}>
+            <FrameworkTabs
+              framework={framework}
+              onChange={setFramework}
+              react={
+                <CodeBlock>{`<GuidedTourProvider config={config}>
   <GuidedTourOverlay />
   <App />
 </GuidedTourProvider>`}</CodeBlock>
+              }
+              angular={
+                <CodeBlock>{`// app.config.ts
+{ provide: GUIDED_TOUR_CONFIG, useValue: { config } }`}</CodeBlock>
+              }
+            />
           </Section>
 
           <div className="mt-24 pt-12 border-t border-outline-variant/10 text-center text-on-surface-variant text-sm">

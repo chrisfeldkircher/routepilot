@@ -1,9 +1,12 @@
+import { Link } from 'react-router-dom';
 import { useReveal } from '../useReveal';
 
 interface Framework {
+  id?: 'react' | 'angular';
   name: string;
   logo: React.ReactNode;
   supported: boolean;
+  docsHash?: string;
 }
 
 const ReactLogo = () => (
@@ -40,10 +43,10 @@ const AngularLogo = () => (
 );
 
 const frameworks: Framework[] = [
-  { name: 'React', logo: <ReactLogo />, supported: true },
+  { id: 'react', name: 'React', logo: <ReactLogo />, supported: true, docsHash: 'getting-started' },
   { name: 'Vue', logo: <VueLogo />, supported: false },
   { name: 'Svelte', logo: <SvelteLogo />, supported: false },
-  { name: 'Angular', logo: <AngularLogo />, supported: false },
+  { id: 'angular', name: 'Angular', logo: <AngularLogo />, supported: true, docsHash: 'getting-started' },
 ];
 
 export function FrameworkSupport() {
@@ -58,16 +61,21 @@ export function FrameworkSupport() {
         <div className="flex flex-wrap justify-center items-center gap-6 sm:gap-8 md:gap-12 opacity-80">
           {frameworks.map((fw, i) =>
             fw.supported ? (
-              <div
+              <Link
                 key={fw.name}
-                className={`flex flex-col items-center gap-2 group cursor-pointer reveal reveal-scale ${visible ? 'visible' : ''}`}
+                to={{
+                  pathname: '/docs',
+                  search: fw.id ? `?framework=${fw.id}` : '',
+                  hash: fw.docsHash ? `#${fw.docsHash}` : '',
+                }}
+                className={`flex flex-col items-center gap-2 group reveal reveal-scale ${visible ? 'visible' : ''}`}
                 style={{ transitionDelay: `${0.1 + i * 0.08}s` }}
               >
-                <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-surface-container flex items-center justify-center text-primary border border-primary/40 shadow-lg shadow-primary/10">
+                <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-surface-container flex items-center justify-center text-primary border border-primary/40 shadow-lg shadow-primary/10 group-hover:border-primary/70 group-hover:shadow-primary/20 transition-all">
                   {fw.logo}
                 </div>
-                <span className="text-xs font-headline font-bold text-primary">{fw.name}</span>
-              </div>
+                <span className="text-xs font-headline font-bold text-primary group-hover:underline">{fw.name}</span>
+              </Link>
             ) : (
               <div
                 key={fw.name}

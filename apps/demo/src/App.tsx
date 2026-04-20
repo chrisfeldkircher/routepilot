@@ -5,8 +5,8 @@ import {
   GuidedTourOverlay,
   useGuidedTourActions,
   useGuidedTourState,
-} from '@routepilot/core';
-import type { TourNavigationAdapter, TourDefinition } from '@routepilot/core';
+} from '@routepilot/react';
+import type { TourNavigationAdapter, TourDefinition } from '@routepilot/react';
 import Header from './components/Header';
 import Dashboard from './components/Dashboard';
 import TaskList from './components/TaskList';

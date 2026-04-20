@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useGuidedTourActions } from '@routepilot/core';
+import { useGuidedTourActions } from '@routepilot/react';
 import {
   settingsState,
   getPermissionsForRole,
