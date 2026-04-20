@@ -94,7 +94,7 @@ const faqPickerStep: StepDefinition = {
   tooltip: { placement: 'center' },
   content: {
     title: 'FAQs, but they actually use the app',
-    body: 'You\'re looking at a ==sub-menu tooltip==. The user clicked a ==high-level help option== on the page (the ==|Browse help topics|== card on the FAQ landing) and the tooltip is now fanning out the ==granular paths== for that topic — right where they are, no redirect to a separate docs site.\n\nBranching uses ==|StepTransition[]|== on a single step. Each transition becomes a button; ==|goTo(target)|== fires when clicked. Same primitive powers policy gates, role-based paths, or experiment arms.\n\nTop-right ==|← Back to FAQ|== replaces the default ==Skip== label. It\'s opt-in per-tour via ==|TourDefinition.navigation|==:\n==|hubReturnLabel: \'← Back to FAQ\'|==\n==|hubAction: \'stop\'|==\n==|stepPickerScope: \'chapter\'|==\n\nUse ==|hubAction: \'stop\'|== when the canonical hub lives ==outside== the tour (like the page-level FAQ landing here). Use ==|hubAction: \'goToHub\'|== with ==|hubNodeId|== when the hub is a step ==inside== the tour. Onboarding tours that want the default ==skip-and-stop== behaviour simply omit the field.',
+    body: 'You\'re looking at a ==sub-menu tooltip==. The user clicked a ==high-level help option== on the page (the ==|Browse help topics|== card on the FAQ landing) and the tooltip is now fanning out the ==granular paths== for that topic — right where they are, no redirect to a separate docs site.\n\nBranching uses ==|StepTransition[]|== on a single step. Each transition becomes a button; ==|goTo(target)|== fires when clicked. Same primitive powers policy gates, role-based paths, or experiment arms.\n\nTop-right ==|← Back to FAQ|== replaces the default ==Skip== label. It\'s opt-in per-tour via ==|TourDefinition.navigation|==:\n==|hubNodeId: \'faq-picker\'|==\n==|hubReturnLabel: \'← Back to FAQ\'|==\n==|hubAction: \'goToHub\'|==\n==|stepPickerScope: \'chapter\'|==\n\nThat sends users back to this in-tour picker instead of closing the tour. The actual exit path is a separate ==|Done — exit|== transition. Use ==|hubAction: \'stop\'|== only when the canonical hub lives ==outside== the tour. Onboarding tours that want the default ==skip-and-stop== behaviour simply omit the field.',
   },
   transitions: [
     {
@@ -376,9 +376,15 @@ export const pickupFaqTour: TourDefinition = {
   id: 'pickup-faq',
   name: 'ParcelRelay — FAQ as interactive tour',
   description: 'Branching FAQ tour demonstrating in-app self-service',
+  confetti: {
+    enabled: true,
+    duration: 5000,
+    colors: ['#6366f1', '#22c55e', '#f59e0b', '#ef4444', '#a855f7', '#06b6d4'],
+  },
   navigation: {
+    hubNodeId: 'faq-picker',
     hubReturnLabel: '← Back to FAQ',
-    hubAction: 'stop',
+    hubAction: 'goToHub',
     stepPickerScope: 'chapter',
   },
   onStart: () => {

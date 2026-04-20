@@ -8,33 +8,71 @@ const notify = () => {
   window.dispatchEvent(new CustomEvent('pickup-tour:state-changed'));
 };
 
-const seedPickupState = () => { pickupState.init(); notify(); };
-const resetPickupState = () => { pickupState.reset(); notify(); };
+const seedPickupState = () => {
+  pickupState.init();
+  notify();
+};
+
+const resetPickupState = () => {
+  pickupState.reset();
+  notify();
+};
 
 const setRouteFilled = () => {
   pickupState.setOrigin('1 Market St, Suite 300', '94105');
   pickupState.setDestination('500 Harbor Blvd', '94103');
   notify();
 };
-const clearRoute = () => { pickupState.setOrigin('', ''); pickupState.setDestination('', ''); notify(); };
+const clearRoute = () => {
+  pickupState.setOrigin('', '');
+  pickupState.setDestination('', '');
+  notify();
+};
 
-const selectSurgeSlot = () => { pickupState.selectSlot('today-afternoon'); notify(); };
-const clearSlot = () => { pickupState.selectSlot(null); notify(); };
+const selectSurgeSlot = () => {
+  pickupState.selectSlot('today-afternoon');
+  notify();
+};
 
-const setTierExpress = () => { pickupState.setTier('express'); notify(); };
-const setTierStandard = () => { pickupState.setTier('standard'); notify(); };
+const clearSlot = () => {
+  pickupState.selectSlot(null);
+  notify();
+};
+
+const setTierExpress = () => {
+  pickupState.setTier('express');
+  notify();
+};
+
+const setTierStandard = () => {
+  pickupState.setTier('standard');
+  notify();
+};
 
 const setLargePackage = () => {
   const first = pickupState.get().packages[0];
-  if (first) { pickupState.updatePackage(first.id, { size: 'L', weightKg: 9.6 }); notify(); }
+  if (first) {
+    pickupState.updatePackage(first.id, { size: 'L', weightKg: 9.6 });
+    notify();
+  }
 };
 const resetFirstPackage = () => {
   const first = pickupState.get().packages[0];
-  if (first) { pickupState.updatePackage(first.id, { size: 'M', weightKg: 4.2 }); notify(); }
+  if (first) {
+    pickupState.updatePackage(first.id, { size: 'M', weightKg: 4.2 });
+    notify();
+  }
 };
 
-const joinMorningWaitlist = () => { pickupState.joinWaitlist('today-morning'); notify(); };
-const clearWaitlist = () => { pickupState.clearWaitlist(); notify(); };
+const joinMorningWaitlist = () => {
+  pickupState.joinWaitlist('today-morning');
+  notify();
+};
+
+const clearWaitlist = () => {
+  pickupState.clearWaitlist();
+  notify();
+};
 
 const faqIntroStep: StepDefinition = {
   id: 'faq-intro',
@@ -60,10 +98,26 @@ const faqPickerStep: StepDefinition = {
     body: 'You\'re looking at a ==sub-menu tooltip==. The user clicked a ==high-level help option== on the page (the ==|Browse help topics|== card on the FAQ landing) and the tooltip is now fanning out the ==granular paths== for that topic — right where they are, no redirect to a separate docs site.\n\nBranching uses ==|StepTransition[]|== on a single step. Each transition becomes a button; ==|goTo(target)|== fires when clicked. Same primitive powers policy gates, role-based paths, or experiment arms.\n\nTop-right ==|← Back to FAQ|== replaces the default ==Skip== label. It\'s opt-in per-tour via ==|TourDefinition.navigation|==:\n==|hubNodeId: \'faq-picker\'|==\n==|hubReturnLabel: \'← Back to FAQ\'|==\n==|hubAction: \'goToHub\'|==\n==|stepPickerScope: \'chapter\'|==\n\nThat sends users back to this in-tour picker instead of closing the tour. The actual exit path is a separate ==|Done — exit|== transition. Use ==|hubAction: \'stop\'|== only when the canonical hub lives ==outside== the tour. Onboarding tours that want the default ==skip-and-stop== behaviour simply omit the field.',
   },
   transitions: [
-    { target: 'price-intro', label: 'Why does my total keep changing?', description: 'Walk through the live price breakdown' },
-    { target: 'slot-intro', label: 'My slot is unavailable — what now?', description: 'See the waitlist + alternatives flow' },
-    { target: 'flow-intro', label: 'How do I book a pickup end-to-end?', description: 'Guided happy-path walkthrough' },
-    { target: 'faq-outro', label: "I'm good — exit the help tour", description: 'Leave the tour' },
+    {
+      target: 'price-intro',
+      label: 'Why does my total keep changing?',
+      description: 'Walk through the live price breakdown',
+    },
+    {
+      target: 'slot-intro',
+      label: 'My slot is unavailable — what now?',
+      description: 'See the waitlist + alternatives flow',
+    },
+    {
+      target: 'flow-intro',
+      label: 'How do I book a pickup end-to-end?',
+      description: 'Guided happy-path walkthrough',
+    },
+    {
+      target: 'faq-outro',
+      label: "I'm good — exit the help tour",
+      description: 'Leave the tour',
+    },
   ],
 };
 
@@ -80,7 +134,16 @@ const priceRouteStep = createStep(
   'We filled the ZIPs for you. Look at ==|Distance fee|== in the breakdown — it went from ==|$0.00|== to a real number. Entering ZIPs unlocks the distance-based component.',
   'bottom',
 );
-priceRouteStep.preparations = [{ id: 'fill-route', scope: 'step', factory: async () => { setRouteFilled(); return async () => clearRoute(); } }];
+priceRouteStep.preparations = [
+  {
+    id: 'fill-route',
+    scope: 'step',
+    factory: async () => {
+      setRouteFilled();
+      return async () => clearRoute();
+    },
+  },
+];
 
 const pricePackageStep = createStep(
   'price-package', PICKUP_ROUTE, '[data-tour="first-package"]',
@@ -88,7 +151,16 @@ const pricePackageStep = createStep(
   'We just bumped the package to ==|L|==. The ==|Package surcharge|== line jumped to ==|$8.00|==. Small is free, Medium adds $3, Large adds $8. Stacking multiple parcels stacks the fees.',
   'top',
 );
-pricePackageStep.preparations = [{ id: 'bump-package-size', scope: 'step', factory: async () => { setLargePackage(); return async () => resetFirstPackage(); } }];
+pricePackageStep.preparations = [
+  {
+    id: 'bump-package-size',
+    scope: 'step',
+    factory: async () => {
+      setLargePackage();
+      return async () => resetFirstPackage();
+    },
+  },
+];
 
 const priceTierStep = createStep(
   'price-tier', PICKUP_ROUTE, '[data-tour="tier-section"]',
@@ -96,7 +168,16 @@ const priceTierStep = createStep(
   'Flipping to ==|Express|== applied a ==|×1.45|== multiplier over the subtotal. Priority is ==|×1.90|==. That\'s why the same route can cost ==2x== depending on tier — the multiplier hits every line above.',
   'top',
 );
-priceTierStep.preparations = [{ id: 'flip-tier', scope: 'step', factory: async () => { setTierExpress(); return async () => setTierStandard(); } }];
+priceTierStep.preparations = [
+  {
+    id: 'flip-tier',
+    scope: 'step',
+    factory: async () => {
+      setTierExpress();
+      return async () => setTierStandard();
+    },
+  },
+];
 
 const priceSurgeStep = createStep(
   'price-surge', PICKUP_ROUTE, '[data-tour="slot-today-afternoon"]',
@@ -104,7 +185,16 @@ const priceSurgeStep = createStep(
   'We picked the ==|Today afternoon|== slot — it has a ==+surge== badge. A ==|Peak-hour surge|== line just appeared in the breakdown for ==|$2.50|==. Slots without the badge don\'t add this line.',
   'right',
 );
-priceSurgeStep.preparations = [{ id: 'select-surge-slot', scope: 'step', factory: async () => { selectSurgeSlot(); return async () => clearSlot(); } }];
+priceSurgeStep.preparations = [
+  {
+    id: 'select-surge-slot',
+    scope: 'step',
+    factory: async () => {
+      selectSurgeSlot();
+      return async () => clearSlot();
+    },
+  },
+];
 
 const priceOutroStep: StepDefinition = {
   id: 'price-outro',
@@ -133,7 +223,16 @@ const slotWaitlistStep = createStep(
   'You\'re now on the waitlist for the morning slot. If it frees up, we text you. The ==banner== below the grid confirms the state. Nothing was emailed yet — the tour intercepts this write.',
   'top',
 );
-slotWaitlistStep.preparations = [{ id: 'join-waitlist', scope: 'step', factory: async () => { joinMorningWaitlist(); return async () => clearWaitlist(); } }];
+slotWaitlistStep.preparations = [
+  {
+    id: 'join-waitlist',
+    scope: 'step',
+    factory: async () => {
+      joinMorningWaitlist();
+      return async () => clearWaitlist();
+    },
+  },
+];
 
 const slotAlternativeStep = createStep(
   'slot-alternative', PICKUP_ROUTE, '[data-tour="slot-tomorrow-morning"]',
@@ -172,7 +271,16 @@ const flowRouteStep = createStep(
   'Origin + destination ZIPs unlock the ==distance fee==. Addresses are for the courier; ZIPs are for pricing.',
   'bottom',
 );
-flowRouteStep.preparations = [{ id: 'flow-fill-route', scope: 'step', factory: async () => { setRouteFilled(); return async () => clearRoute(); } }];
+flowRouteStep.preparations = [
+  {
+    id: 'flow-fill-route',
+    scope: 'step',
+    factory: async () => {
+      setRouteFilled();
+      return async () => clearRoute();
+    },
+  },
+];
 
 const flowPackageStep = createStep(
   'flow-package', PICKUP_ROUTE, '[data-tour="packages-section"]',
@@ -227,10 +335,25 @@ const faqOutroStep: StepDefinition = {
 };
 
 const allSteps: StepDefinition[] = [
-  faqIntroStep, faqPickerStep,
-  priceIntroStep, priceRouteStep, pricePackageStep, priceTierStep, priceSurgeStep, priceOutroStep,
-  slotIntroStep, slotWaitlistStep, slotAlternativeStep, slotOutroStep,
-  flowIntroStep, flowRouteStep, flowPackageStep, flowSlotStep, flowTierStep, flowConfirmStep, flowOutroStep,
+  faqIntroStep,
+  faqPickerStep,
+  priceIntroStep,
+  priceRouteStep,
+  pricePackageStep,
+  priceTierStep,
+  priceSurgeStep,
+  priceOutroStep,
+  slotIntroStep,
+  slotWaitlistStep,
+  slotAlternativeStep,
+  slotOutroStep,
+  flowIntroStep,
+  flowRouteStep,
+  flowPackageStep,
+  flowSlotStep,
+  flowTierStep,
+  flowConfirmStep,
+  flowOutroStep,
   faqOutroStep,
 ];
 
@@ -240,7 +363,10 @@ faqPickerStep.preparations = [
     id: 'pickup-seed',
     scope: 'tour',
     sharedWith: allSteps.filter((s) => s.id !== 'faq-picker').map((s) => s.id),
-    factory: async () => { seedPickupState(); return async () => resetPickupState(); },
+    factory: async () => {
+      seedPickupState();
+      return async () => resetPickupState();
+    },
   },
 ];
 
@@ -251,19 +377,37 @@ export const faqTour: TourDefinition = {
   id: 'pickup-faq',
   name: 'ParcelRelay — FAQ as interactive tour',
   description: 'Branching FAQ tour demonstrating in-app self-service',
+  confetti: {
+    enabled: true,
+    duration: 5000,
+    colors: ['#6366f1', '#22c55e', '#f59e0b', '#ef4444', '#a855f7', '#06b6d4'],
+  },
   navigation: {
     hubNodeId: 'faq-picker',
     hubReturnLabel: '← Back to FAQ',
     hubAction: 'goToHub',
     stepPickerScope: 'chapter',
   },
-  onStart: () => { seedPickupState(); },
-  onFinish: () => { resetPickupState(); },
+  onStart: () => {
+    seedPickupState();
+  },
+  onFinish: () => {
+    resetPickupState();
+  },
   steps: [
     ...withChapter([faqIntroStep, faqPickerStep], 'Help'),
-    ...withChapter([priceIntroStep, priceRouteStep, pricePackageStep, priceTierStep, priceSurgeStep, priceOutroStep], 'FAQ — Pricing'),
-    ...withChapter([slotIntroStep, slotWaitlistStep, slotAlternativeStep, slotOutroStep], 'FAQ — Availability'),
-    ...withChapter([flowIntroStep, flowRouteStep, flowPackageStep, flowSlotStep, flowTierStep, flowConfirmStep, flowOutroStep], 'FAQ — End-to-end'),
+    ...withChapter(
+      [priceIntroStep, priceRouteStep, pricePackageStep, priceTierStep, priceSurgeStep, priceOutroStep],
+      'FAQ — Pricing',
+    ),
+    ...withChapter(
+      [slotIntroStep, slotWaitlistStep, slotAlternativeStep, slotOutroStep],
+      'FAQ — Availability',
+    ),
+    ...withChapter(
+      [flowIntroStep, flowRouteStep, flowPackageStep, flowSlotStep, flowTierStep, flowConfirmStep, flowOutroStep],
+      'FAQ — End-to-end',
+    ),
     ...withChapter([faqOutroStep], 'Done'),
   ],
 };

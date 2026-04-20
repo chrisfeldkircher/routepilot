@@ -8,8 +8,15 @@ const notify = () => {
   window.dispatchEvent(new CustomEvent('settings-tour:state-changed'));
 };
 
-const seedSettingsState = () => { settingsState.init(); notify(); };
-const resetSettingsState = () => { settingsState.reset(); notify(); };
+const seedSettingsState = () => {
+  settingsState.init();
+  notify();
+};
+
+const resetSettingsState = () => {
+  settingsState.reset();
+  notify();
+};
 
 const docsGifIntroStep: StepDefinition = {
   id: 'docs-gif-intro',
@@ -49,10 +56,20 @@ const emailDigestStep = createStep(
   'We just switched from ==|Off|== to ==|Daily|==. The user now gets a ==morning summary== of all activity — new issues, comments, status changes.\n\nThe preparation toggled the real control. When this step ends and the tour cleans up, it\'ll revert to ==|Off|==.',
   'right',
 );
-emailDigestStep.preparations = [{
-  id: 'demo-email-digest', scope: 'step',
-  factory: async () => { settingsState.setEmailDigest('daily'); notify(); return async () => { settingsState.setEmailDigest('off'); notify(); }; },
-}];
+emailDigestStep.preparations = [
+  {
+    id: 'demo-email-digest',
+    scope: 'step',
+    factory: async () => {
+      settingsState.setEmailDigest('daily');
+      notify();
+      return async () => {
+        settingsState.setEmailDigest('off');
+        notify();
+      };
+    },
+  },
+];
 
 const slackChannelStep = createStep(
   'docs-slack', SETTINGS_ROUTE, '[data-tour="slack-channel"]',
@@ -60,10 +77,20 @@ const slackChannelStep = createStep(
   'We just connected ==|#eng-alerts|==. Issue transitions, deployment events, and SLA breaches now post here in real time. This is a ==step-scoped preparation== — the channel disconnects when we move on.\n\nIn production you\'d use ==|scope: \'tour\'|== if the channel should stay connected across multiple steps.',
   'right',
 );
-slackChannelStep.preparations = [{
-  id: 'demo-slack-channel', scope: 'step',
-  factory: async () => { settingsState.setSlackChannel('#eng-alerts'); notify(); return async () => { settingsState.setSlackChannel(null); notify(); }; },
-}];
+slackChannelStep.preparations = [
+  {
+    id: 'demo-slack-channel',
+    scope: 'step',
+    factory: async () => {
+      settingsState.setSlackChannel('#eng-alerts');
+      notify();
+      return async () => {
+        settingsState.setSlackChannel(null);
+        notify();
+      };
+    },
+  },
+];
 
 const accessSectionStep = createStep(
   'docs-access-section', SETTINGS_ROUTE, '[data-tour="access-section"]',
@@ -78,10 +105,20 @@ const roleStep = createStep(
   'We just promoted this user to ==|Admin|==. Look at the permission list — it expanded from ==2 items to 8==. That\'s the kind of context a tooltip can\'t communicate. The user needs to ==see the delta==.\n\nThis preparation used ==|scope: \'step\'|== — the role drops back to ==|Viewer|== on the next step.',
   'right',
 );
-roleStep.preparations = [{
-  id: 'demo-role-admin', scope: 'step',
-  factory: async () => { settingsState.setRole('admin'); notify(); return async () => { settingsState.setRole('viewer'); notify(); }; },
-}];
+roleStep.preparations = [
+  {
+    id: 'demo-role-admin',
+    scope: 'step',
+    factory: async () => {
+      settingsState.setRole('admin');
+      notify();
+      return async () => {
+        settingsState.setRole('viewer');
+        notify();
+      };
+    },
+  },
+];
 
 const twoFactorStep = createStep(
   'docs-2fa', SETTINGS_ROUTE, '[data-tour="2fa-toggle"]',
@@ -89,10 +126,20 @@ const twoFactorStep = createStep(
   'Flipped to ==|Enabled|==. The badge changed from ==gray to green==. In a real app this would trigger an enrollment flow — the tour intercepts that and just shows the ==end state==.\n\nThis is a common pattern: ==|preparations|== skip the ceremony and show the result, so the docs stay focused.',
   'right',
 );
-twoFactorStep.preparations = [{
-  id: 'demo-2fa', scope: 'step',
-  factory: async () => { settingsState.setTwoFactor(true); notify(); return async () => { settingsState.setTwoFactor(false); notify(); }; },
-}];
+twoFactorStep.preparations = [
+  {
+    id: 'demo-2fa',
+    scope: 'step',
+    factory: async () => {
+      settingsState.setTwoFactor(true);
+      notify();
+      return async () => {
+        settingsState.setTwoFactor(false);
+        notify();
+      };
+    },
+  },
+];
 
 const workflowSectionStep = createStep(
   'docs-workflow-section', SETTINGS_ROUTE, '[data-tour="workflow-section"]',
@@ -107,10 +154,20 @@ const transitionStep = createStep(
   'We switched to ==|Auto-resolve|==. Now when a linked PR merges, the issue moves to ==Done== automatically — no manual drag.\n\n==|Auto-close|== goes further: it closes the issue entirely. ==|Manual|== (the default) leaves everything to the team.',
   'right',
 );
-transitionStep.preparations = [{
-  id: 'demo-transition', scope: 'step',
-  factory: async () => { settingsState.setIssueTransition('auto-resolve'); notify(); return async () => { settingsState.setIssueTransition('manual'); notify(); }; },
-}];
+transitionStep.preparations = [
+  {
+    id: 'demo-transition',
+    scope: 'step',
+    factory: async () => {
+      settingsState.setIssueTransition('auto-resolve');
+      notify();
+      return async () => {
+        settingsState.setIssueTransition('manual');
+        notify();
+      };
+    },
+  },
+];
 
 const automationStep = createStep(
   'docs-automation', SETTINGS_ROUTE, '[data-tour="automation-rules"]',
@@ -118,13 +175,24 @@ const automationStep = createStep(
   'All three rules are now ==|Enabled|==. Stale issues get labeled, first commenters get assigned, and sprint overflows ping Slack.\n\nThree ==|toggleAutomationRule()|== calls in one ==preparation factory== — the engine batches them into a single step transition.',
   'top',
 );
-automationStep.preparations = [{
-  id: 'demo-automation-rules', scope: 'step',
-  factory: async () => {
-    settingsState.toggleAutomationRule(1, true); settingsState.toggleAutomationRule(2, true); settingsState.toggleAutomationRule(3, true); notify();
-    return async () => { settingsState.toggleAutomationRule(1, false); settingsState.toggleAutomationRule(2, false); settingsState.toggleAutomationRule(3, false); notify(); };
+automationStep.preparations = [
+  {
+    id: 'demo-automation-rules',
+    scope: 'step',
+    factory: async () => {
+      settingsState.toggleAutomationRule(1, true);
+      settingsState.toggleAutomationRule(2, true);
+      settingsState.toggleAutomationRule(3, true);
+      notify();
+      return async () => {
+        settingsState.toggleAutomationRule(1, false);
+        settingsState.toggleAutomationRule(2, false);
+        settingsState.toggleAutomationRule(3, false);
+        notify();
+      };
+    },
   },
-}];
+];
 
 const integrationsSectionStep = createStep(
   'docs-integrations-section', SETTINGS_ROUTE, '[data-tour="integrations-section"]',
@@ -139,10 +207,20 @@ const apiKeyStep = createStep(
   'The key is now visible: ==|pulse_sk_live_7f3a…|==. In production, revealing this requires re-authentication. The tour\'s preparation ==skipped the auth gate== and showed the end state directly.\n\nThe ==|Regenerate|== button would invalidate all existing integrations — the kind of ==destructive action== docs should warn about contextually, not in a footnote.',
   'top',
 );
-apiKeyStep.preparations = [{
-  id: 'demo-api-key-reveal', scope: 'step',
-  factory: async () => { settingsState.setApiKeyRevealed(true); notify(); return async () => { settingsState.setApiKeyRevealed(false); notify(); }; },
-}];
+apiKeyStep.preparations = [
+  {
+    id: 'demo-api-key-reveal',
+    scope: 'step',
+    factory: async () => {
+      settingsState.setApiKeyRevealed(true);
+      notify();
+      return async () => {
+        settingsState.setApiKeyRevealed(false);
+        notify();
+      };
+    },
+  },
+];
 
 const webhookStep = createStep(
   'docs-webhook', SETTINGS_ROUTE, '[data-tour="webhook-config"]',
@@ -150,15 +228,22 @@ const webhookStep = createStep(
   'URL set to ==|https://hooks.acme.io/pulse|==, listening for ==issue.created==, ==issue.resolved==, and ==sprint.completed==.\n\nThe preparation set the URL and checked three event boxes in one factory call. Cleanup unchecks them all — the user\'s real config is untouched.',
   'top',
 );
-webhookStep.preparations = [{
-  id: 'demo-webhook-config', scope: 'step',
-  factory: async () => {
-    settingsState.setWebhookUrl('https://hooks.acme.io/pulse');
-    settingsState.setWebhookEvents(['issue.created', 'issue.resolved', 'sprint.completed']);
-    notify();
-    return async () => { settingsState.setWebhookUrl(''); settingsState.setWebhookEvents([]); notify(); };
+webhookStep.preparations = [
+  {
+    id: 'demo-webhook-config',
+    scope: 'step',
+    factory: async () => {
+      settingsState.setWebhookUrl('https://hooks.acme.io/pulse');
+      settingsState.setWebhookEvents(['issue.created', 'issue.resolved', 'sprint.completed']);
+      notify();
+      return async () => {
+        settingsState.setWebhookUrl('');
+        settingsState.setWebhookEvents([]);
+        notify();
+      };
+    },
   },
-}];
+];
 
 const docsOutroStep: StepDefinition = {
   id: 'docs-outro',
@@ -171,11 +256,20 @@ const docsOutroStep: StepDefinition = {
 };
 
 const allSteps: StepDefinition[] = [
-  docsGifIntroStep, docsIntroStep,
-  notifSectionStep, emailDigestStep, slackChannelStep,
-  accessSectionStep, roleStep, twoFactorStep,
-  workflowSectionStep, transitionStep, automationStep,
-  integrationsSectionStep, apiKeyStep, webhookStep,
+  docsGifIntroStep,
+  docsIntroStep,
+  notifSectionStep,
+  emailDigestStep,
+  slackChannelStep,
+  accessSectionStep,
+  roleStep,
+  twoFactorStep,
+  workflowSectionStep,
+  transitionStep,
+  automationStep,
+  integrationsSectionStep,
+  apiKeyStep,
+  webhookStep,
   docsOutroStep,
 ];
 
@@ -185,7 +279,10 @@ docsGifIntroStep.preparations = [
     id: 'settings-seed',
     scope: 'tour',
     sharedWith: allSteps.filter((s) => s.id !== 'docs-gif-intro').map((s) => s.id),
-    factory: async () => { seedSettingsState(); return async () => resetSettingsState(); },
+    factory: async () => {
+      seedSettingsState();
+      return async () => resetSettingsState();
+    },
   },
 ];
 
@@ -196,8 +293,12 @@ export const interactiveDocsTour: TourDefinition = {
   id: 'interactive-docs',
   name: 'Pulse — Interactive documentation',
   description: 'Settings page that documents itself via live demonstrations',
-  onStart: () => { seedSettingsState(); },
-  onFinish: () => { resetSettingsState(); },
+  onStart: () => {
+    seedSettingsState();
+  },
+  onFinish: () => {
+    resetSettingsState();
+  },
   steps: [
     ...withChapter([docsGifIntroStep, docsIntroStep], 'Overview'),
     ...withChapter([notifSectionStep, emailDigestStep, slackChannelStep], 'Notifications'),
