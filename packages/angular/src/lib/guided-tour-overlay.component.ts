@@ -1131,6 +1131,9 @@ export class GuidedTourOverlayComponent implements OnInit, AfterViewInit, OnDest
     const node = this.currentNode;
     if (!node) {
       this.availableTransitions = [];
+      this.isLast = false;
+      this.showBranchChooser = false;
+      this.checkConfetti();
       return;
     }
 
@@ -1143,11 +1146,15 @@ export class GuidedTourOverlayComponent implements OnInit, AfterViewInit, OnDest
           this.currentNode.next.length === 0 &&
           this.availableTransitions.length === 0;
         this.showBranchChooser = this.availableTransitions.length > 1;
+        this.checkConfetti();
         this.cdr.markForCheck();
       })
       .catch((err) => {
         console.error('[guided-tour] Failed to evaluate transitions', err);
         this.availableTransitions = [];
+        this.isLast = false;
+        this.showBranchChooser = false;
+        this.checkConfetti();
         this.cdr.markForCheck();
       });
   }
@@ -1159,6 +1166,10 @@ export class GuidedTourOverlayComponent implements OnInit, AfterViewInit, OnDest
       !this.isLast ||
       !this.currentStep
     ) {
+      if (this.confettiCleanup) {
+        this.confettiCleanup();
+        this.confettiCleanup = null;
+      }
       return;
     }
 

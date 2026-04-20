@@ -8,8 +8,15 @@ const notify = () => {
   window.dispatchEvent(new CustomEvent('import-tour:state-changed'));
 };
 
-const seedImportState = () => { importState.init(); notify(); };
-const resetImportState = () => { importState.reset(); notify(); };
+const seedImportState = () => {
+  importState.init();
+  notify();
+};
+
+const resetImportState = () => {
+  importState.reset();
+  notify();
+};
 
 const errorGifIntroStep: StepDefinition = {
   id: 'error-gif-intro',
@@ -56,16 +63,22 @@ const fixMappingStep = createStep(
   'We just mapped ==|email|== → ==|email_address|==. The tour\'s ==preparation== did this — same primitive you\'d use to pre-fill a form, toggle a setting, or inject any state the step needs.\n\nThe error row now shows ==resolved==. One down, two to go.',
   'left',
 );
-fixMappingStep.preparations = [{
-  id: 'fix-email-mapping',
-  scope: 'tour',
-  factory: async () => {
-    importState.resolveError(1);
-    importState.setMapping('email', 'email_address');
-    notify();
-    return async () => { importState.unresolveError(1); importState.setMapping('email', null); notify(); };
+fixMappingStep.preparations = [
+  {
+    id: 'fix-email-mapping',
+    scope: 'tour',
+    factory: async () => {
+      importState.resolveError(1);
+      importState.setMapping('email', 'email_address');
+      notify();
+      return async () => {
+        importState.unresolveError(1);
+        importState.setMapping('email', null);
+        notify();
+      };
+    },
   },
-}];
+];
 
 const errorTypeStep = createStep(
   'error-type', IMPORT_ROUTE, '[data-tour="error-row-2"]',
@@ -80,16 +93,22 @@ const fixTypeStep = createStep(
   'The cell now reads ==|23|==. In production this could be a manual edit, a regex transform, or an AI suggestion. The tour ==demonstrated the fix== by mutating the preview via its ==preparation factory==.\n\nTwo down.',
   'top',
 );
-fixTypeStep.preparations = [{
-  id: 'fix-age-value',
-  scope: 'tour',
-  factory: async () => {
-    importState.resolveError(2);
-    importState.fixPreviewValue(14, 'age', '23');
-    notify();
-    return async () => { importState.unresolveError(2); importState.unfixPreviewValue(14, 'age', 'twenty-three'); notify(); };
+fixTypeStep.preparations = [
+  {
+    id: 'fix-age-value',
+    scope: 'tour',
+    factory: async () => {
+      importState.resolveError(2);
+      importState.fixPreviewValue(14, 'age', '23');
+      notify();
+      return async () => {
+        importState.unresolveError(2);
+        importState.unfixPreviewValue(14, 'age', 'twenty-three');
+        notify();
+      };
+    },
   },
-}];
+];
 
 const errorDuplicateStep = createStep(
   'error-duplicate', IMPORT_ROUTE, '[data-tour="error-row-3"]',
@@ -104,16 +123,22 @@ const fixDedupStep = createStep(
   'We selected ==|Skip duplicates|== — row 42 will be dropped, row 7 (first occurrence) stays. ==|Overwrite|== would replace the existing record instead.\n\nAll three ==preparations== ran in sequence; each one\'s cleanup is registered with the engine and reverts on tour end. Three for three.',
   'top',
 );
-fixDedupStep.preparations = [{
-  id: 'fix-dedup-strategy',
-  scope: 'tour',
-  factory: async () => {
-    importState.resolveError(3);
-    importState.setDedupStrategy('skip');
-    notify();
-    return async () => { importState.unresolveError(3); importState.setDedupStrategy(null); notify(); };
+fixDedupStep.preparations = [
+  {
+    id: 'fix-dedup-strategy',
+    scope: 'tour',
+    factory: async () => {
+      importState.resolveError(3);
+      importState.setDedupStrategy('skip');
+      notify();
+      return async () => {
+        importState.unresolveError(3);
+        importState.setDedupStrategy(null);
+        notify();
+      };
+    },
   },
-}];
+];
 
 const revalidateStep = createStep(
   'revalidate', IMPORT_ROUTE, '[data-tour="revalidate-btn"]',
@@ -121,15 +146,20 @@ const revalidateStep = createStep(
   'All three fixes are in place. Hitting ==|Re-validate|== re-runs the pipeline check. Watch the error count drop to ==zero== and the banner turn ==green==.',
   'left',
 );
-revalidateStep.preparations = [{
-  id: 'run-revalidation',
-  scope: 'tour',
-  factory: async () => {
-    importState.revalidate();
-    notify();
-    return async () => { importState.setStatus('errors'); notify(); };
+revalidateStep.preparations = [
+  {
+    id: 'run-revalidation',
+    scope: 'tour',
+    factory: async () => {
+      importState.revalidate();
+      notify();
+      return async () => {
+        importState.setStatus('errors');
+        notify();
+      };
+    },
   },
-}];
+];
 
 const recoverySuccessStep = createStep(
   'recovery-success', IMPORT_ROUTE, '[data-tour="import-btn"]',
@@ -149,10 +179,18 @@ const recoveryOutroStep: StepDefinition = {
 };
 
 const allSteps: StepDefinition[] = [
-  errorGifIntroStep, recoveryIntroStep, errorOverviewStep,
-  errorMissingStep, fixMappingStep, errorTypeStep, fixTypeStep,
-  errorDuplicateStep, fixDedupStep, revalidateStep,
-  recoverySuccessStep, recoveryOutroStep,
+  errorGifIntroStep,
+  recoveryIntroStep,
+  errorOverviewStep,
+  errorMissingStep,
+  fixMappingStep,
+  errorTypeStep,
+  fixTypeStep,
+  errorDuplicateStep,
+  fixDedupStep,
+  revalidateStep,
+  recoverySuccessStep,
+  recoveryOutroStep,
 ];
 
 errorGifIntroStep.preparations = [
@@ -161,7 +199,10 @@ errorGifIntroStep.preparations = [
     id: 'import-seed',
     scope: 'tour',
     sharedWith: allSteps.filter((s) => s.id !== 'error-gif-intro').map((s) => s.id),
-    factory: async () => { seedImportState(); return async () => resetImportState(); },
+    factory: async () => {
+      seedImportState();
+      return async () => resetImportState();
+    },
   },
 ];
 
@@ -172,8 +213,12 @@ export const errorRecoveryTour: TourDefinition = {
   id: 'error-recovery',
   name: 'DataBridge — Error recovery tour',
   description: 'Guided error recovery for a CSV import pipeline',
-  onStart: () => { seedImportState(); },
-  onFinish: () => { resetImportState(); },
+  onStart: () => {
+    seedImportState();
+  },
+  onFinish: () => {
+    resetImportState();
+  },
   steps: [
     ...withChapter([errorGifIntroStep, recoveryIntroStep, errorOverviewStep], 'Overview'),
     ...withChapter([errorMissingStep, fixMappingStep], 'Missing mapping'),
