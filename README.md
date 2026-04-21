@@ -8,6 +8,9 @@
 [![npm engine](https://img.shields.io/npm/v/%40routepilot%2Fengine?label=engine&style=flat-square&color=cb3837)](https://www.npmjs.com/package/@routepilot/engine)
 [![npm react](https://img.shields.io/npm/v/%40routepilot%2Freact?label=react&style=flat-square&color=61dafb)](https://www.npmjs.com/package/@routepilot/react)
 [![npm angular](https://img.shields.io/npm/v/%40routepilot%2Fangular?label=angular&style=flat-square&color=dd0031)](https://www.npmjs.com/package/@routepilot/angular)
+[![npm assistant](https://img.shields.io/npm/v/%40routepilot%2Fassistant?label=assistant&style=flat-square&color=7c8cff)](https://www.npmjs.com/package/@routepilot/assistant)
+[![npm assistant-react](https://img.shields.io/npm/v/%40routepilot%2Fassistant-react?label=assistant-react&style=flat-square&color=61dafb)](https://www.npmjs.com/package/@routepilot/assistant-react)
+[![npm assistant-angular](https://img.shields.io/npm/v/%40routepilot%2Fassistant-angular?label=assistant-angular&style=flat-square&color=dd0031)](https://www.npmjs.com/package/@routepilot/assistant-angular)
 
 Build onboarding flows, error recovery wizards, interactive documentation, and contextual help — all without touching your application data or modifying your app code to accommodate the tour.
 
@@ -18,6 +21,9 @@ routePilot runs as a pure overlay. It observes your UI through CSS selectors, ma
 - **`@routepilot/engine`** — framework-agnostic core: state machine, DAG navigation, preparations, shared types, bridges, and CSS.
 - **`@routepilot/react`** — React bindings: provider, overlay, hooks, and React-first integration helpers.
 - **`@routepilot/angular`** — Angular bindings: service, overlay component, router adapter, directives, and Angular-first integration helpers.
+- **`@routepilot/assistant`** — _Ask the Tour_ retrieval core: BM25 index + tokenizer that maps free-text questions to the step that answers them. Framework-agnostic.
+- **`@routepilot/assistant-react`** — React UI for the assistant: robot button and prompt bar that render in the tour tooltip footer.
+- **`@routepilot/assistant-angular`** — Angular UI for the assistant: same button + prompt bar, wired through an injection token.
 
 ## Documentation
 
@@ -64,6 +70,7 @@ Most tour libraries force you to wrap components, inject props, or restructure y
 - **Shared state** — cross-step `Map` for passing data between steps
 - **Event system** — emit/intercept custom events for cross-step communication
 - **Dynamic content** — content factories that generate title/body/media from runtime context
+- **Ask the Tour** — in-browser BM25 retrieval (no LLM, no backend) that jumps the user straight to the step that answers their question
 - **TypeScript-first** — full type safety with IntelliSense
 
 ## Use Cases
@@ -239,12 +246,15 @@ For full setup guides, API reference, bridge wiring, and framework-specific exam
 ```
 routepilot/
   packages/
-    engine/           # Framework-agnostic core engine — types, state machine, DAG, services, CSS (@routepilot/engine)
-    react/            # React bindings — Provider, Overlay, hooks (@routepilot/react) — re-exports everything from engine
-    angular/          # Angular bindings — components, services, router adapter (@routepilot/angular)
+    engine/             # Framework-agnostic core engine — types, state machine, DAG, services, CSS (@routepilot/engine)
+    react/              # React bindings — Provider, Overlay, hooks (@routepilot/react) — re-exports everything from engine
+    angular/            # Angular bindings — components, services, router adapter (@routepilot/angular)
+    assistant/          # Ask the Tour core — BM25 index + tokenizer + types + shared CSS (@routepilot/assistant)
+    assistant-react/    # React UI for the assistant — button + prompt bar (@routepilot/assistant-react)
+    assistant-angular/  # Angular UI for the assistant — button + prompt bar (@routepilot/assistant-angular)
   apps/
-    site/             # Landing page and documentation
-    demo/             # Live demo app (embedded in the site via iframe)
+    site/               # Landing page and documentation
+    demo/               # Live demo app (embedded in the site via iframe)
 ```
 
 The core engine in `@routepilot/engine` (state machine, DAG builder, services, navigation adapter) is fully framework-agnostic. Each framework package provides the UI layer (overlay component, hooks/services, router integration) on top of the shared engine. `@routepilot/react` re-exports everything from `@routepilot/engine`, so React users only need a single import.

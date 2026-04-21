@@ -9,6 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@routepilot/assistant": "*",
+    "@routepilot/assistant-react": "*",
     "@routepilot/engine": "*",
     "@routepilot/react": "*",
     "react": "^19.1.0",

@@ -16,8 +16,12 @@ export { TourRouteGuard, normalizePath } from './navigation';
 export type { TourNavigationAdapter, RouteMode, RoutePolicy } from './navigation';
 
 // Configuration
-export { DEFAULT_CONFIG, mergeConfig } from './config';
+export {
+  DEFAULT_CONFIG,
+  mergeConfig,
+} from './config';
 export type {
+  TourAssistantConfig,
   TourEngineConfig,
   TourTooltipConfig,
   TourBackdropConfig,

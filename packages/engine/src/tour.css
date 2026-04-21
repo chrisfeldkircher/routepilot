@@ -226,8 +226,18 @@ img.tour-outline-shimmer::after {
 .tour-tooltip-header,
 .tour-tooltip-selector-area,
 .tour-tooltip-branches,
+.tour-tooltip-slot-area,
 .tour-tooltip-footer {
   flex: 0 0 auto;
+}
+
+/* Generic extension slot rendered between body/branches and footer.
+   The slot itself is a bare container — any visible framing (padding,
+   border, background) must be provided by the plugin's own root element,
+   so Angular host-element wrappers don't leave behind phantom borders
+   when the plugin is collapsed. */
+.tour-tooltip-slot-area {
+  padding: 0;
 }
 
 .tour-tooltip-body-area {

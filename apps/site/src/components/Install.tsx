@@ -9,9 +9,18 @@ const packages: Record<FrameworkOption, string> = {
   angular: '@routepilot/engine @routepilot/angular',
 };
 
-function getCommand(pm: PackageManager, fw: FrameworkOption) {
+const assistantPackages: Record<FrameworkOption, string> = {
+  react: '@routepilot/assistant @routepilot/assistant-react',
+  angular: '@routepilot/assistant @routepilot/assistant-angular',
+};
+
+function getPackages(fw: FrameworkOption, withAssistant: boolean) {
+  return withAssistant ? `${packages[fw]} ${assistantPackages[fw]}` : packages[fw];
+}
+
+function getCommand(pm: PackageManager, fw: FrameworkOption, withAssistant: boolean) {
   const verb = pm === 'npm' ? 'install' : 'add';
-  return `${pm} ${verb} ${packages[fw]}`;
+  return `${pm} ${verb} ${getPackages(fw, withAssistant)}`;
 }
 
 const managers: PackageManager[] = ['npm', 'yarn', 'pnpm', 'bun'];
@@ -38,10 +47,11 @@ const AngularIcon = () => (
 export function Install() {
   const [active, setActive] = useState<PackageManager>('npm');
   const [framework, setFramework] = useState<FrameworkOption>('react');
+  const [withAssistant, setWithAssistant] = useState(false);
   const [copied, setCopied] = useState(false);
   const [ref, visible] = useReveal<HTMLDivElement>();
 
-  const command = getCommand(active, framework);
+  const command = getCommand(active, framework, withAssistant);
 
   const handleCopy = async () => {
     try {
@@ -83,6 +93,7 @@ export function Install() {
           })}
         </div>
 
+
         <div className={`bg-surface-container-lowest rounded-xl overflow-hidden border border-outline-variant/20 shadow-2xl reveal reveal-scale ${visible ? 'visible' : ''}`} style={{ transitionDelay: '0.15s' }}>
           <div className="flex items-center justify-between bg-surface-container-high border-b border-outline-variant/10">
             <div role="tablist" aria-label="Package manager" className="flex">
@@ -123,16 +134,65 @@ export function Install() {
           </div>
 
           <div className="px-4 py-4 sm:px-6 sm:py-5 font-mono text-xs sm:text-sm overflow-x-auto">
-            <code className="text-slate-300 whitespace-nowrap">
-              <span className="text-primary select-none mr-3">$</span>
+            <code className="text-slate-300 whitespace-nowrap inline-flex items-center gap-2 flex-wrap">
+              <span className="text-primary select-none">$</span>
               <span className="text-tertiary">{active}</span>
-              {' '}
               <span className="text-secondary">
                 {active === 'npm' ? 'install' : 'add'}
               </span>
-              {' '}
               <span className="text-primary-dim">{packages[framework]}</span>
+
+              {withAssistant ? (
+                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-tertiary/15 border border-tertiary/30 text-tertiary">
+                  <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>
+                    smart_toy
+                  </span>
+                  <span>{assistantPackages[framework]}</span>
+                  <button
+                    type="button"
+                    onClick={() => setWithAssistant(false)}
+                    aria-label="Remove Ask the Tour"
+                    className="ml-0.5 w-4 h-4 inline-flex items-center justify-center rounded-sm hover:bg-tertiary/25 transition-colors"
+                  >
+                    <span className="material-symbols-outlined text-[12px]">close</span>
+                  </button>
+                </span>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setWithAssistant(true)}
+                  aria-label="Add Ask the Tour packages"
+                  className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md border border-dashed border-outline-variant/40 text-on-surface-variant hover:text-tertiary hover:border-tertiary/50 hover:bg-tertiary/5 transition-colors cursor-pointer"
+                >
+                  <span className="material-symbols-outlined text-[14px]">add</span>
+                  <span>Ask the Tour</span>
+                </button>
+              )}
             </code>
+          </div>
+
+          <div className="px-4 py-3 sm:px-6 border-t border-outline-variant/10 bg-surface-container-high/40 text-[11px] text-on-surface-variant flex items-center gap-2">
+            <span className="material-symbols-outlined text-[14px] text-tertiary/70" style={{ fontVariationSettings: "'FILL' 1" }}>
+              {withAssistant ? 'check_circle' : 'info'}
+            </span>
+            {withAssistant ? (
+              <span>
+                <span className="text-tertiary">Ask the Tour</span> included — BM25 search bar in the tooltip footer.{' '}
+                <a href="/docs#assistant" className="text-primary hover:underline">Wiring →</a>
+              </span>
+            ) : (
+              <span>
+                Need natural-language step search?{' '}
+                <button
+                  type="button"
+                  onClick={() => setWithAssistant(true)}
+                  className="text-tertiary hover:underline font-medium"
+                >
+                  Add Ask the Tour
+                </button>
+                {' '}— a BM25-ranked prompt for your tours, no LLM required.
+              </span>
+            )}
           </div>
         </div>
       </div>

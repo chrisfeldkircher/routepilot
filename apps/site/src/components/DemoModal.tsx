@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-export type DemoScenario = 'standard-onboarding' | 'frequently-asked-questions' | 'error-recovery' | 'interactive-docs';
+export type DemoScenario = 'standard-onboarding' | 'frequently-asked-questions' | 'error-recovery' | 'interactive-docs' | 'assistant';
 
 interface DemoModalProps {
   open: boolean;
@@ -31,6 +31,11 @@ const SCENARIO_CONFIG: Record<
     label: 'Interactive Documentation Live Demo',
     runtimeInstance: 'INTERACTIVE_DOCS_FLOW_V1',
     iframeSrc: '/demo/?autotour=1&scenario=interactive-docs&route=settings',
+  },
+  'assistant': {
+    label: 'Ask the Tour Live Demo',
+    runtimeInstance: 'ASK_THE_TOUR_FLOW_V1',
+    iframeSrc: '/demo/?autotour=1&scenario=assistant&route=import',
   },
 };
 

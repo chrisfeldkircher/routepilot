@@ -2,13 +2,14 @@ import { useState } from 'react';
 import { useReveal } from '../useReveal';
 import { DemoModal, type DemoScenario } from './DemoModal';
 
-type ScenarioId = 'standard-onboarding' | 'frequently-asked-questions' | 'error-recovery' | 'interactive-docs';
+type ScenarioId = 'standard-onboarding' | 'frequently-asked-questions' | 'error-recovery' | 'interactive-docs' | 'assistant';
 
 const LAUNCHABLE_SCENARIOS: Record<string, DemoScenario> = {
   'standard-onboarding': 'standard-onboarding',
   'frequently-asked-questions': 'frequently-asked-questions',
   'error-recovery': 'error-recovery',
   'interactive-docs': 'interactive-docs',
+  'assistant': 'assistant',
 };
 
 interface Scenario {
@@ -22,6 +23,7 @@ const scenarios: Scenario[] = [
   { id: 'frequently-asked-questions', icon: 'support_agent', label: 'Frequently Asked Questions' },
   { id: 'error-recovery', icon: 'running_with_errors', label: 'Error Recovery' },
   { id: 'interactive-docs', icon: 'auto_stories', label: 'Interactive Documentation' },
+  { id: 'assistant', icon: 'smart_toy', label: 'Ask the Tour' },
 ];
 
 export function InteractiveDemo() {

@@ -19,7 +19,10 @@
     "paths": {
       "@/*": ["./src/*"],
       "@routepilot/engine": ["../../packages/engine/src/index.ts"],
-      "@routepilot/react": ["../../packages/react/src/index.ts"]
+      "@routepilot/react": ["../../packages/react/src/index.ts"],
+      "@routepilot/assistant": ["../../packages/assistant/src/index.ts"],
+      "@routepilot/assistant/*": ["../../packages/assistant/src/*"],
+      "@routepilot/assistant-react": ["../../packages/assistant-react/src/index.ts"]
     }
   },
   "include": ["src"]

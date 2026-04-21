@@ -24,7 +24,8 @@
             ],
             "styles": [
               "src/styles.css",
-              "../../packages/engine/src/tour.css"
+              "../../packages/engine/src/tour.css",
+              "../../packages/assistant/src/tour-assistant.css"
             ]
           }
         },

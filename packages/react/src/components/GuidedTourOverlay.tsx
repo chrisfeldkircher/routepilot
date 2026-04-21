@@ -1,6 +1,7 @@
 import { createElement, useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { useGuidedTour } from '../hooks/useGuidedTour';
+import { useTooltipSlots } from './TooltipSlotContext';
 import { startConfetti } from '@routepilot/engine';
 import type {
   StepContent,
@@ -385,6 +386,7 @@ const computeTooltipStyle = (rect: Rect | null, tooltip: StepTooltipConfig | und
 
 const GuidedTourOverlay = (): JSX.Element | null => {
   const { state, actions, services, registry, sequence, routeGuard, location: currentPath, config } = useGuidedTour();
+  const slots = useTooltipSlots();
   const labels = config.tooltip?.buttonLabels ?? {};
 
   const [anchorRect, setAnchorRect] = useState<Rect | null>(null);
@@ -823,7 +825,15 @@ const GuidedTourOverlay = (): JSX.Element | null => {
         }
       }
     };
+    const isEditable = (target: EventTarget | null): boolean => {
+      if (!(target instanceof HTMLElement)) return false;
+      if (target.isContentEditable) return true;
+      const tag = target.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return true;
+      return false;
+    };
     const preventKeys = (e: KeyboardEvent) => {
+      if (isEditable(e.target)) return;
       if (findScrollableAncestor(e.target)) return;
       const scrollKeys = ['ArrowUp', 'ArrowDown', 'Space', 'PageUp', 'PageDown', 'Home', 'End'];
       if (scrollKeys.includes(e.code)) e.preventDefault();
@@ -1300,6 +1310,8 @@ const GuidedTourOverlay = (): JSX.Element | null => {
           </div>
         )}
 
+        <div className="tour-tooltip-slot-area">{slots.footer}</div>
+
         <div className="tour-tooltip-footer gt-px-4 gt-py-3 gt-border-t gt-border-border/60 gt-flex gt-items-center gt-justify-between">
           {(config.tooltip?.showStepCounter !== false) && (
             <span className="tour-tooltip-counter gt-text-xs gt-text-muted-foreground">
@@ -1307,6 +1319,7 @@ const GuidedTourOverlay = (): JSX.Element | null => {
             </span>
           )}
           <div className="tour-tooltip-nav gt-flex gt-items-center gt-gap-2" style={{ marginLeft: 'auto' }}>
+            {slots.footerNav}
             <button
               onClick={() => void actions.back()}
               disabled={!canGoBack || isTransitioning}

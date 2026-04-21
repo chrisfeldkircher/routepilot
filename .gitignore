@@ -4,7 +4,11 @@ dist/
 coverage/
 .vite/
 .angular/
+.turbo/
+.tmp/
+tmp/
 *.tsbuildinfo
+*.tgz
 
 .env
 .env.local
@@ -13,6 +17,7 @@ coverage/
 *.log
 
 .DS_Store
+Thumbs.db
 .idea/
 .vscode/
 .claude/

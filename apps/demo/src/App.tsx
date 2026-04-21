@@ -7,6 +7,12 @@ import {
   useGuidedTourState,
 } from '@routepilot/react';
 import type { TourNavigationAdapter, TourDefinition } from '@routepilot/react';
+import { TourIndex } from '@routepilot/assistant';
+import {
+  TourAssistantProvider,
+  TourAssistantButton,
+  TourAssistantPrompt,
+} from '@routepilot/assistant-react';
 import Header from './components/Header';
 import Dashboard from './components/Dashboard';
 import TaskList from './components/TaskList';
@@ -20,6 +26,7 @@ import { demoTour } from './tour/demoTour';
 import { pickupFaqTour } from './pickup/pickupTour';
 import { errorRecoveryTour } from './import/importTour';
 import { interactiveDocsTour } from './settings/settingsTour';
+import { assistantShowcaseTour } from './assistantShowcaseTour';
 
 const isInIframe = typeof window !== 'undefined' && window.self !== window.top;
 
@@ -28,12 +35,14 @@ const PICKUP_TOUR_FINAL_STEP_ID = 'faq-outro';
 const IMPORT_TOUR_FINAL_STEP_ID = 'recovery-outro';
 
 const DOCS_TOUR_FINAL_STEP_ID = 'docs-outro';
+const ASSISTANT_SHOWCASE_FINAL_STEP_ID = 'assistant-outro';
 
 const TOUR_FINAL_STEPS: Record<string, string> = {
   [demoTour.id]: DEMO_TOUR_FINAL_STEP_ID,
   [pickupFaqTour.id]: PICKUP_TOUR_FINAL_STEP_ID,
   [errorRecoveryTour.id]: IMPORT_TOUR_FINAL_STEP_ID,
   [interactiveDocsTour.id]: DOCS_TOUR_FINAL_STEP_ID,
+  [assistantShowcaseTour.id]: ASSISTANT_SHOWCASE_FINAL_STEP_ID,
 };
 
 const resolveScenarioTour = (search: string, pathname: string): TourDefinition => {
@@ -41,6 +50,7 @@ const resolveScenarioTour = (search: string, pathname: string): TourDefinition =
   if (params.get('scenario') === 'faq') return pickupFaqTour;
   if (params.get('scenario') === 'error-recovery') return errorRecoveryTour;
   if (params.get('scenario') === 'interactive-docs') return interactiveDocsTour;
+  if (params.get('scenario') === 'assistant') return assistantShowcaseTour;
   if (pathname.startsWith('/pickup')) return pickupFaqTour;
   if (pathname.startsWith('/import')) return errorRecoveryTour;
   if (pathname.startsWith('/settings')) return interactiveDocsTour;
@@ -84,6 +94,7 @@ function TourController() {
     if (state.tourId === pickupFaqTour.id) activeTourRef.current = pickupFaqTour;
     else if (state.tourId === errorRecoveryTour.id) activeTourRef.current = errorRecoveryTour;
     else if (state.tourId === interactiveDocsTour.id) activeTourRef.current = interactiveDocsTour;
+    else if (state.tourId === assistantShowcaseTour.id) activeTourRef.current = assistantShowcaseTour;
     else if (state.tourId === demoTour.id) activeTourRef.current = demoTour;
   }, [state.tourId]);
 
@@ -186,15 +197,27 @@ export default function App() {
     navigate: (path, opts) => navigate(path, { replace: opts?.replace }),
   }), [navigate, location.pathname]);
 
-  const tours = useMemo(() => [demoTour, pickupFaqTour, errorRecoveryTour, interactiveDocsTour], []);
+  const tours = useMemo(
+    () => [demoTour, pickupFaqTour, errorRecoveryTour, interactiveDocsTour, assistantShowcaseTour],
+    [],
+  );
+
+  const assistant = useMemo(() => TourIndex.fromTours(tours), [tours]);
 
   return (
     <GuidedTourProvider
       tours={tours}
       location={location.pathname}
       navigation={navAdapter}
+      tooltipFooterSlot={<TourAssistantPrompt />}
+      tooltipFooterNavSlot={<TourAssistantButton />}
     >
-      <AppContent />
+      <TourAssistantProvider
+        index={assistant}
+        queryOptions={{ scope: 'current-tour-only' }}
+      >
+        <AppContent />
+      </TourAssistantProvider>
     </GuidedTourProvider>
   );
 }

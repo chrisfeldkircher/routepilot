@@ -1,0 +1,1073 @@
+/* ──────────────────────────────────────────────────────────────────────
+   @routepilot/assistant — prompt-to-step UI styles.
+   Import once in your app entry:
+
+       import '@routepilot/assistant/tour-assistant.css';
+
+   These classes style <TourAssistantButton/> and <TourAssistantPrompt/>.
+   The host tooltip provides the outer layout.
+   ──────────────────────────────────────────────────────────────────── */
+
+:root {
+  --tour-assistant-loader-size: 0.95rem;
+  --tour-assistant-loader-slot-width: 1.6rem;
+  --tour-assistant-loader-slot-height: 1.55rem;
+  --tour-assistant-loader-primary: rgb(var(--tour-accent, 99, 102, 241));
+  --tour-assistant-loader-secondary: rgb(var(--tour-accent-secondary, 139, 92, 246));
+  --tour-assistant-loader-tertiary: rgb(var(--tour-accent-tertiary, 96, 165, 250));
+  --tour-assistant-loader-surface: rgba(255, 255, 255, 0.92);
+  --tour-assistant-loader-ink: rgba(15, 23, 42, 0.9);
+  --tour-assistant-loader-muted: rgba(var(--tour-accent, 99, 102, 241), 0.18);
+  --tour-assistant-loader-speed-fast: 1s;
+  --tour-assistant-loader-speed-medium: 1.45s;
+  --tour-assistant-loader-speed-slow: 1.9s;
+}
+
+.tour-loader {
+  --tour-assistant-loader-width: 1em;
+  --tour-assistant-loader-height: 1em;
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: var(--tour-assistant-loader-width);
+  height: var(--tour-assistant-loader-height);
+  font-size: var(--tour-assistant-loader-size);
+  color: var(--tour-assistant-loader-primary);
+  isolation: isolate;
+  overflow: visible;
+}
+
+.tour-loader,
+.tour-loader::before,
+.tour-loader::after {
+  box-sizing: border-box;
+}
+
+.tour-loader::before,
+.tour-loader::after {
+  content: '';
+  position: absolute;
+}
+
+.tour-loader--conic-trio {
+  --tour-assistant-loader-width: 1em;
+  --tour-assistant-loader-height: 1em;
+  --tour-loader-conic: conic-gradient(
+    from -90deg at 0.1667em 0.1667em,
+    var(--tour-assistant-loader-primary) 90deg,
+    transparent 0
+  );
+  background:
+    var(--tour-loader-conic),
+    var(--tour-loader-conic),
+    var(--tour-loader-conic);
+  background-repeat: no-repeat;
+  background-size: 50% 50%;
+  animation: tour-assistant-loader-conic-trio var(--tour-assistant-loader-speed-medium) infinite;
+}
+
+.tour-loader--conic-shift {
+  --tour-assistant-loader-width: 0.95em;
+  --tour-assistant-loader-height: 0.95em;
+  --tour-loader-conic: conic-gradient(
+    from -90deg,
+    var(--tour-assistant-loader-secondary) 90deg,
+    transparent 0
+  );
+  background:
+    var(--tour-loader-conic),
+    var(--tour-loader-conic);
+  background-repeat: no-repeat;
+  background-size: 40% 40%;
+  animation: tour-assistant-loader-conic-shift var(--tour-assistant-loader-speed-slow) infinite;
+}
+
+.tour-loader--crosshair-orbit {
+  --tour-assistant-loader-width: 0.9em;
+  --tour-assistant-loader-height: 0.9em;
+  --tour-loader-line: linear-gradient(var(--tour-assistant-loader-primary) 0 0);
+  --tour-loader-dot: radial-gradient(
+    farthest-side,
+    var(--tour-assistant-loader-secondary) 92%,
+    transparent
+  );
+  background:
+    var(--tour-loader-dot) center /0.28em 0.28em,
+    var(--tour-loader-line) left 50% top -0.45em /0.16em 0.34em,
+    var(--tour-loader-line) left 50% bottom -0.45em /0.16em 0.34em,
+    var(--tour-loader-line) top 50% left -0.45em /0.34em 0.16em,
+    var(--tour-loader-line) top 50% right -0.45em /0.34em 0.16em;
+  background-repeat: no-repeat;
+  animation:
+    tour-assistant-loader-crosshair-orbit-shift var(--tour-assistant-loader-speed-medium) infinite,
+    tour-assistant-loader-crosshair-orbit-turn var(--tour-assistant-loader-speed-medium) infinite;
+}
+
+.tour-loader--pulse-ring {
+  --tour-assistant-loader-width: 0.95em;
+  --tour-assistant-loader-height: 0.95em;
+  border-radius: 50%;
+  background: linear-gradient(
+    135deg,
+    var(--tour-assistant-loader-primary),
+    var(--tour-assistant-loader-secondary)
+  );
+  transform-origin: 50% 40%;
+  -webkit-mask: radial-gradient(circle closest-side at 50% 40%, transparent 76%, #000 77%);
+  mask: radial-gradient(circle closest-side at 50% 40%, transparent 76%, #000 77%);
+  animation: tour-assistant-loader-pulse-ring var(--tour-assistant-loader-speed-fast) infinite linear;
+}
+
+.tour-loader--split-ring {
+  --tour-assistant-loader-width: 0.95em;
+  --tour-assistant-loader-height: 0.95em;
+  display: grid;
+}
+
+.tour-loader--split-ring::before,
+.tour-loader--split-ring::after {
+  inset: 0;
+  border-radius: 50%;
+  background: var(--tour-assistant-loader-primary);
+  -webkit-mask: repeating-linear-gradient(#000 0 0.1em, #0000 0 0.2em);
+  mask: repeating-linear-gradient(#000 0 0.1em, #0000 0 0.2em);
+  animation: tour-assistant-loader-split-ring var(--tour-assistant-loader-speed-slow) infinite;
+}
+
+.tour-loader--split-ring::after {
+  background: var(--tour-assistant-loader-secondary);
+  -webkit-mask: repeating-linear-gradient(#0000 0 0.1em, #000 0 0.2em);
+  mask: repeating-linear-gradient(#0000 0 0.1em, #000 0 0.2em);
+  --tour-loader-direction: -1;
+}
+
+.tour-loader--flip-blocks,
+.tour-loader--flip-triangles {
+  --tour-assistant-loader-width: 1.05em;
+  --tour-assistant-loader-height: 1.05em;
+  display: inline-flex;
+  align-items: stretch;
+  justify-content: stretch;
+  overflow: visible;
+}
+
+.tour-loader--flip-blocks {
+  animation: tour-assistant-loader-flip-blocks-root 2s infinite steps(1);
+}
+
+.tour-loader--flip-triangles {
+  animation: tour-assistant-loader-flip-triangles-root 2s infinite linear;
+}
+
+.tour-loader--flip-blocks::before,
+.tour-loader--flip-blocks::after,
+.tour-loader--flip-triangles::before,
+.tour-loader--flip-triangles::after {
+  content: '';
+  position: relative;
+  display: block;
+  flex: 1 1 0;
+  width: 50%;
+  height: 100%;
+  min-width: 0;
+  min-height: 100%;
+  animation:
+    tour-assistant-loader-flip-panels 1s infinite linear alternate,
+    tour-assistant-loader-flip-color 2s infinite steps(1) -0.5s;
+}
+
+.tour-loader--flip-blocks::before,
+.tour-loader--flip-blocks::after {
+  background: var(--tour-assistant-loader-primary);
+}
+
+.tour-loader--flip-triangles::before,
+.tour-loader--flip-triangles::after {
+  background: var(--tour-assistant-loader-secondary);
+  clip-path: polygon(100% 0, 100% 100%, 0 50%);
+}
+
+.tour-loader--flip-blocks::after,
+.tour-loader--flip-triangles::after {
+  --tour-loader-scale: -1, -1;
+}
+
+.tour-loader--dual-frames {
+  --tour-assistant-loader-width: 1.05em;
+  --tour-assistant-loader-height: 1.05em;
+  display: grid;
+}
+
+.tour-loader--dual-frames::before,
+.tour-loader--dual-frames::after {
+  inset: 0;
+  margin: auto;
+  aspect-ratio: 1;
+  border: 0.12em solid var(--tour-assistant-loader-primary);
+  box-sizing: content-box;
+  animation: tour-assistant-loader-dual-frames 1s infinite steps(4, jump-none);
+}
+
+.tour-loader--dual-frames::after {
+  animation-delay: -0.5s;
+  border-color: var(--tour-assistant-loader-secondary);
+  border-radius: 50%;
+}
+
+.tour-loader--arcade-track {
+  --tour-assistant-loader-width: 1.18em;
+  --tour-assistant-loader-height: 1.05em;
+  border: 0.08em solid var(--tour-assistant-loader-ink);
+  padding: 0 0.12em;
+  background:
+    linear-gradient(var(--tour-assistant-loader-surface) 0 0) 0 0 /0.12em 0.3em,
+    linear-gradient(var(--tour-assistant-loader-surface) 0 0) 100% 0 /0.12em 0.3em,
+    radial-gradient(
+      farthest-side,
+      var(--tour-assistant-loader-surface) 90%,
+      transparent
+    ) 0 0.08em /0.12em 0.12em content-box,
+    var(--tour-assistant-loader-ink);
+  background-repeat: no-repeat;
+  animation: tour-assistant-loader-arcade-track 2s infinite linear;
+}
+
+.tour-loader--loading-bar {
+  --tour-assistant-loader-width: 2.9em;
+  --tour-assistant-loader-height: 1.15em;
+  width: var(--tour-assistant-loader-width);
+  height: var(--tour-assistant-loader-height);
+  font-size: calc(var(--tour-assistant-loader-size) * 0.42);
+  border-right: 0.3em solid transparent;
+  border-left: 0.3em solid transparent;
+  background:
+    linear-gradient(var(--tour-assistant-loader-primary) 0 0) left,
+    linear-gradient(var(--tour-assistant-loader-secondary) 0 0) right;
+  background-repeat: no-repeat;
+  background-origin: border-box;
+  color: var(--tour-assistant-loader-ink);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-weight: 700;
+  line-height: 1.4;
+  animation: tour-assistant-loader-loading-bar 2s infinite;
+}
+
+.tour-loader--loading-bar::before {
+  content: 'Loading';
+  position: relative;
+}
+
+.tour-loader--loading-bar::after {
+  top: calc(100% - 0.05em);
+  left: 0;
+  width: 0.95em;
+  height: 1.8em;
+  background:
+    linear-gradient(
+      90deg,
+      var(--tour-assistant-loader-ink) 0.16em,
+      transparent 0 calc(100% - 0.16em),
+      var(--tour-assistant-loader-ink) 0
+    ) bottom /100% 0.6em,
+    linear-gradient(var(--tour-assistant-loader-ink) 0 0) bottom 0.1em left 0 /100% 0.2em,
+    linear-gradient(var(--tour-assistant-loader-ink) 0 0) bottom 0 left 50% /0.28em 0.5em;
+  background-repeat: no-repeat;
+  animation: tour-assistant-loader-loading-bar-arm 2s infinite;
+}
+
+.tour-loader--rgb-stack {
+  --tour-assistant-loader-width: 1.05em;
+  --tour-assistant-loader-height: 0.78em;
+  background:
+    linear-gradient(var(--tour-assistant-loader-primary) 0 0) 0 100% /100% 50%,
+    linear-gradient(var(--tour-assistant-loader-primary) 0 0) 0 0 /calc(100% / 3) 100%;
+  background-repeat: no-repeat;
+  clip-path: inset(-100% 0 0 0);
+  animation: tour-assistant-loader-rgb-stack-root 2s infinite steps(4);
+}
+
+.tour-loader--rgb-stack::before,
+.tour-loader--rgb-stack::after {
+  inset: -50% 0 50%;
+  background:
+    linear-gradient(var(--tour-assistant-loader-secondary) 0 0) 0 0 /calc(2 * 100% / 3) 50%,
+    linear-gradient(var(--tour-assistant-loader-secondary) 0 0) 100% 100% /calc(2 * 100% / 3) 50%;
+  background-repeat: no-repeat;
+  animation: inherit;
+  animation-name: tour-assistant-loader-rgb-stack-middle;
+}
+
+.tour-loader--rgb-stack::after {
+  inset: -100% 0 100%;
+  background:
+    linear-gradient(var(--tour-assistant-loader-tertiary) 0 0) 0 0 /100% 50%,
+    linear-gradient(var(--tour-assistant-loader-tertiary) 0 0) 100% 0 /calc(100% / 3) 100%;
+  background-repeat: no-repeat;
+  animation-name: tour-assistant-loader-rgb-stack-top;
+}
+
+.tour-loader--pixel-climber {
+  --tour-assistant-loader-width: 2.4em;
+  --tour-assistant-loader-height: 2.4em;
+  width: var(--tour-assistant-loader-width);
+  height: var(--tour-assistant-loader-height);
+  font-size: calc(var(--tour-assistant-loader-size) * 0.24);
+  padding: 1.7em 0.12em 2.8em;
+  background: linear-gradient(var(--tour-assistant-loader-primary) 0 0)
+    0 0 /100% 100% content-box padding-box no-repeat;
+  overflow: hidden;
+  animation: tour-assistant-loader-pixel-climber-root 2s infinite cubic-bezier(1, 175, 0.5, 175);
+}
+
+.tour-loader--pixel-climber::before {
+  content: 'Loading';
+  position: relative;
+  display: inline-block;
+  color: var(--tour-assistant-loader-surface);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-weight: 700;
+  animation: tour-assistant-loader-pixel-climber-text 2s infinite;
+}
+
+.tour-loader--pixel-climber::after {
+  top: 110%;
+  left: calc(50% - 0.95em);
+  width: 2em;
+  height: 1.65em;
+  background:
+    linear-gradient(90deg, transparent 0.7em, var(--tour-assistant-loader-secondary) 0 1.3em, transparent 0 1.55em, var(--tour-assistant-loader-surface) 0 1.88em, transparent 0) bottom 1.55em left 50%,
+    linear-gradient(90deg, transparent 0.58em, var(--tour-assistant-loader-secondary) 0 1.65em, var(--tour-assistant-loader-surface) 0 1.88em, transparent 0) bottom 1.42em left 50%,
+    linear-gradient(90deg, transparent 0.58em, var(--tour-assistant-loader-ink) 0 0.95em, var(--tour-assistant-loader-surface) 0 1.18em, var(--tour-assistant-loader-ink) 0 1.3em, var(--tour-assistant-loader-surface) 0 1.42em, var(--tour-assistant-loader-ink) 0 1.55em, var(--tour-assistant-loader-secondary) 0 1.88em, transparent 0) bottom 1.3em left 50%,
+    linear-gradient(90deg, transparent 0.48em, var(--tour-assistant-loader-ink) 0 0.6em, var(--tour-assistant-loader-surface) 0 0.72em, var(--tour-assistant-loader-ink) 0 0.95em, var(--tour-assistant-loader-surface) 0 1.18em, var(--tour-assistant-loader-ink) 0 1.3em, var(--tour-assistant-loader-surface) 0 1.65em, var(--tour-assistant-loader-secondary) 0 1.88em, transparent 0) bottom 1.18em left 50%,
+    linear-gradient(90deg, transparent 0.48em, var(--tour-assistant-loader-ink) 0 0.6em, var(--tour-assistant-loader-surface) 0 0.72em, var(--tour-assistant-loader-ink) 0 0.95em, var(--tour-assistant-loader-surface) 0 1.3em, var(--tour-assistant-loader-ink) 0 1.42em, var(--tour-assistant-loader-surface) 0 1.78em, var(--tour-assistant-loader-secondary) 0 1.88em, transparent 0) bottom 1.06em left 50%,
+    linear-gradient(90deg, transparent 0.48em, var(--tour-assistant-loader-ink) 0 0.72em, var(--tour-assistant-loader-surface) 0 1.18em, var(--tour-assistant-loader-ink) 0 1.65em, var(--tour-assistant-loader-secondary) 0 1.78em, transparent 0) bottom 0.94em left 50%,
+    linear-gradient(90deg, transparent 0.7em, var(--tour-assistant-loader-surface) 0 1.55em, var(--tour-assistant-loader-secondary) 0 1.78em, transparent 0) bottom 0.82em left 50%,
+    linear-gradient(90deg, var(--tour-assistant-loader-surface) 0.35em, var(--tour-assistant-loader-secondary) 0 0.82em, var(--tour-assistant-loader-tertiary) 0 0.95em, var(--tour-assistant-loader-secondary) 0 1.3em, var(--tour-assistant-loader-tertiary) 0 1.42em, var(--tour-assistant-loader-secondary) 0 1.65em, transparent 0 1.88em, var(--tour-assistant-loader-ink) 0) bottom 0.7em left 50%,
+    linear-gradient(90deg, var(--tour-assistant-loader-surface) 0.35em, var(--tour-assistant-loader-secondary) 0 0.95em, var(--tour-assistant-loader-tertiary) 0 1.06em, var(--tour-assistant-loader-secondary) 0 1.42em, var(--tour-assistant-loader-secondary) 0 1.53em, transparent 0 1.76em, var(--tour-assistant-loader-ink) 0) bottom 0.58em left 50%,
+    linear-gradient(90deg, transparent 0.58em, var(--tour-assistant-loader-secondary) 0 0.95em, var(--tour-assistant-loader-tertiary) 0 1.42em, #fde68a 0 1.55em, var(--tour-assistant-loader-tertiary) 0 1.78em, var(--tour-assistant-loader-ink) 0) bottom 0.46em left 50%,
+    linear-gradient(90deg, transparent 0.7em, var(--tour-assistant-loader-tertiary) 0 1.06em, #fde68a 0 1.18em, var(--tour-assistant-loader-tertiary) 0 1.78em, var(--tour-assistant-loader-ink) 0) bottom 0.34em left 50%,
+    linear-gradient(90deg, transparent 0.48em, var(--tour-assistant-loader-ink) 0 0.72em, var(--tour-assistant-loader-tertiary) 0 1.78em, var(--tour-assistant-loader-ink) 0) bottom 0.22em left 50%,
+    linear-gradient(90deg, transparent 0.35em, var(--tour-assistant-loader-ink) 0 0.82em, var(--tour-assistant-loader-tertiary) 0 1.53em, transparent 0) bottom 0.1em left 50%,
+    linear-gradient(90deg, transparent 0.35em, var(--tour-assistant-loader-ink) 0 0.58em, transparent 0) bottom 0 left 50%;
+  background-size: 2em 0.12em;
+  background-repeat: no-repeat;
+  animation: inherit;
+  animation-name: tour-assistant-loader-pixel-climber-sprite;
+}
+
+.tour-loader--corner-chase {
+  --tour-assistant-loader-width: 0.9em;
+  --tour-assistant-loader-height: 0.9em;
+}
+
+.tour-loader--corner-chase::before,
+.tour-loader--corner-chase::after {
+  top: 0;
+  left: 0;
+  margin: -0.125em 0 0 -0.125em;
+  width: 0.25em;
+  height: 0.25em;
+  background: var(--tour-assistant-loader-primary);
+  animation:
+    tour-assistant-loader-corner-chase var(--tour-assistant-loader-speed-slow) infinite,
+    tour-assistant-loader-corner-spin 0.5s infinite;
+}
+
+.tour-loader--corner-chase::after {
+  background: var(--tour-assistant-loader-tertiary);
+  animation-delay: -0.95s, 0s;
+}
+
+.tour-loader--checker {
+  --tour-assistant-loader-width: 0.95em;
+  --tour-assistant-loader-height: 0.95em;
+  color: var(--tour-assistant-loader-primary);
+  border: 0.12em solid currentColor;
+  background:
+    repeating-conic-gradient(from 0deg, transparent 0 90deg, currentColor 0 180deg),
+    repeating-conic-gradient(from 0deg, var(--tour-assistant-loader-secondary) 0 90deg, transparent 0 180deg);
+  background-position: 0 0, 0.33em 0;
+  background-size: 0.33em 0.33em;
+  animation: tour-assistant-loader-checker 1.6s infinite linear;
+}
+
+.tour-loader--stripe-sweep {
+  --tour-assistant-loader-width: 0.95em;
+  --tour-assistant-loader-height: 0.95em;
+  display: grid;
+  --tour-loader-stripes:
+    var(--tour-assistant-loader-primary) 25%,
+    var(--tour-assistant-loader-secondary) 0 50%,
+    var(--tour-assistant-loader-tertiary) 0 75%,
+    var(--tour-assistant-loader-primary) 0;
+}
+
+.tour-loader--stripe-sweep::before,
+.tour-loader--stripe-sweep::after {
+  inset: 0;
+  background:
+    linear-gradient(90deg, var(--tour-loader-stripes)),
+    linear-gradient(-90deg, var(--tour-loader-stripes));
+  background-size: 400% 52%;
+  background-repeat: no-repeat;
+  animation: tour-assistant-loader-stripe-sweep 2s infinite;
+}
+
+.tour-loader--double-dots-drip,
+.tour-loader--double-dots-gasp,
+.tour-loader--double-dots-wink {
+  --tour-assistant-loader-width: 1.5em;
+  --tour-assistant-loader-height: 0.62em;
+}
+
+.tour-loader--double-dots-drip::before,
+.tour-loader--double-dots-drip::after,
+.tour-loader--double-dots-gasp::before,
+.tour-loader--double-dots-gasp::after,
+.tour-loader--double-dots-wink::before,
+.tour-loader--double-dots-wink::after {
+  top: 0;
+  width: 0.56em;
+  height: 0.56em;
+  border-radius: 50%;
+  background:
+    linear-gradient(var(--tour-assistant-loader-ink) 0 0) top /100% 0% no-repeat,
+    radial-gradient(farthest-side, var(--tour-assistant-loader-ink) 95%, transparent) 50% /0.22em 0.22em no-repeat,
+    var(--tour-assistant-loader-surface);
+}
+
+.tour-loader--double-dots-drip::before,
+.tour-loader--double-dots-gasp::before,
+.tour-loader--double-dots-wink::before {
+  left: 0;
+}
+
+.tour-loader--double-dots-drip::after,
+.tour-loader--double-dots-gasp::after,
+.tour-loader--double-dots-wink::after {
+  right: 0;
+}
+
+.tour-loader--double-dots-drip::before,
+.tour-loader--double-dots-drip::after {
+  animation: tour-assistant-loader-double-dots-drip 4s infinite ease-in;
+}
+
+.tour-loader--double-dots-gasp::before,
+.tour-loader--double-dots-gasp::after {
+  background:
+    linear-gradient(var(--tour-assistant-loader-ink) 0 0) top /100% 40% no-repeat,
+    radial-gradient(farthest-side, var(--tour-assistant-loader-ink) 95%, transparent) 50% /0.22em 0.22em no-repeat,
+    var(--tour-assistant-loader-surface);
+  animation: tour-assistant-loader-double-dots-gasp 1.5s infinite alternate ease-in;
+}
+
+.tour-loader--double-dots-wink::before,
+.tour-loader--double-dots-wink::after {
+  animation: tour-assistant-loader-double-dots-wink 1.5s infinite alternate;
+}
+
+.tour-loader--double-dots-wink::after {
+  --tour-loader-scale-x: -1;
+}
+
+.tour-loader--quadrant-lines {
+  --tour-assistant-loader-width: 0.95em;
+  --tour-assistant-loader-height: 0.95em;
+  display: grid;
+}
+
+.tour-loader--quadrant-lines::before,
+.tour-loader--quadrant-lines::after {
+  inset: 0;
+  margin: 0 0 0.24em 0.24em;
+  --tour-loader-quadrant:
+    transparent calc(100% / 3),
+    var(--tour-assistant-loader-primary) 0 calc(2 * 100% / 3),
+    transparent 0;
+  --tour-loader-qh: linear-gradient(90deg, var(--tour-loader-quadrant));
+  --tour-loader-qv: linear-gradient(0deg, var(--tour-loader-quadrant));
+  background:
+    var(--tour-loader-qh),
+    var(--tour-loader-qv),
+    var(--tour-loader-qh),
+    var(--tour-loader-qv);
+  background-size: 300% 0.14em, 0.14em 300%;
+  background-repeat: no-repeat;
+  animation: tour-assistant-loader-quadrant-lines 1s infinite linear;
+}
+
+.tour-loader--quadrant-lines::after {
+  margin: 0.24em 0.24em 0 0;
+  transform: scale(-1, -1);
+}
+
+.tour-loader--track-runner {
+  --tour-assistant-loader-width: 1.5em;
+  --tour-assistant-loader-height: 0.74em;
+  background:
+    radial-gradient(farthest-side, var(--tour-assistant-loader-primary) 90%, transparent) 0 0 /0.18em 0.18em,
+    linear-gradient(var(--tour-assistant-loader-surface) 0 0) 100% 0 /0.64em 0.18em,
+    linear-gradient(var(--tour-assistant-loader-surface) 0 0) 0 100% /0.64em 0.18em,
+    repeating-linear-gradient(90deg, var(--tour-assistant-loader-surface) 0 0.22em, transparent 0 0.64em);
+  background-repeat: no-repeat;
+  animation: tour-assistant-loader-track-runner 2s infinite;
+}
+
+.tour-loader--rail-bounce,
+.tour-loader--rail-slides {
+  --tour-assistant-loader-width: 1.92em;
+  --tour-assistant-loader-height: 0.52em;
+  box-shadow: 0 0.08em 0 var(--tour-assistant-loader-surface);
+  clip-path: inset(-2em 0 -0.12em);
+}
+
+.tour-loader--rail-bounce::before {
+  left: calc(50% - 0.15em);
+  bottom: 0;
+  width: 0.3em;
+  height: 0.3em;
+  border-radius: 50%;
+  background: var(--tour-assistant-loader-tertiary);
+  animation: tour-assistant-loader-rail-bounce 1s infinite;
+}
+
+.tour-loader--rail-bounce::after {
+  inset: auto calc(50% - 0.36em) 0;
+  height: 1em;
+  background:
+    linear-gradient(var(--tour-assistant-loader-surface) 0 0) 0 -1em /0.34em 0.3em,
+    linear-gradient(var(--tour-assistant-loader-surface) 0 0) 100% -1em /0.34em 0.3em,
+    linear-gradient(var(--tour-assistant-loader-surface) 0 0) 0 calc(100% - 0.34em) /0.34em 0.3em,
+    linear-gradient(var(--tour-assistant-loader-surface) 0 0) 100% calc(100% - 0.34em) /0.34em 0.3em;
+  background-repeat: no-repeat;
+  animation:
+    tour-assistant-loader-rail-slides-steps 2s infinite linear,
+    tour-assistant-loader-rail-slides-shift 2s infinite linear;
+}
+
+.tour-loader--rail-slides::before {
+  inset: auto calc(50% - 0.36em) 0;
+  height: 1em;
+  background:
+    linear-gradient(var(--tour-assistant-loader-surface) 0 0) 0 -1em /0.34em 0.3em,
+    linear-gradient(var(--tour-assistant-loader-surface) 0 0) 100% -1em /0.34em 0.3em,
+    linear-gradient(var(--tour-assistant-loader-surface) 0 0) 0 calc(100% - 0.34em) /0.34em 0.3em,
+    linear-gradient(var(--tour-assistant-loader-surface) 0 0) 100% calc(100% - 0.34em) /0.34em 0.3em;
+  background-repeat: no-repeat;
+  animation:
+    tour-assistant-loader-rail-slides-steps 2s infinite linear,
+    tour-assistant-loader-rail-slides-shift 2s infinite linear;
+}
+
+.tour-loader--rail-slides::after {
+  display: none;
+}
+
+@keyframes tour-assistant-loader-conic-trio {
+  0% { background-position: 0 0, 0.1667em 0.1667em, 0.3333em 0.3333em; }
+  33% { background-position: -0.5em 0, 0.1667em 0.1667em, 0.3333em 0.3333em; }
+  66% { background-position: -0.5em 0, 0.1667em 0.6667em, 0.3333em 0.3333em; }
+  100% { background-position: -0.5em 0, 0.1667em 0.6667em, 0.8333em 0.3333em; }
+}
+
+@keyframes tour-assistant-loader-conic-shift {
+  0%, 20% { background-position: 0 0, 0 calc(100% / 3); }
+  33% { background-position: 0 0, calc(100% / 3) calc(100% / 3); }
+  66% { background-position: 0 calc(100% / 3), calc(100% / 3) 0; }
+  80%, 100% { background-position: 0 calc(100% / 3), 0 0; }
+}
+
+@keyframes tour-assistant-loader-crosshair-orbit-shift {
+  30%, 70% {
+    background-position:
+      center,
+      left 50% top calc(50% - 0.2em),
+      left 50% bottom calc(50% - 0.2em),
+      top 50% left calc(50% - 0.2em),
+      top 50% right calc(50% - 0.2em);
+  }
+}
+
+@keyframes tour-assistant-loader-crosshair-orbit-turn {
+  0%, 40% { transform: rotate(0deg); }
+  60%, 100% { transform: rotate(90deg); }
+}
+
+@keyframes tour-assistant-loader-pulse-ring {
+  100% { transform: rotate(1turn); }
+}
+
+@keyframes tour-assistant-loader-split-ring {
+  0%, 10% { transform: translate(0) rotate(0deg); }
+  35% { transform: translate(calc(var(--tour-loader-direction, 1) * 50%)) rotate(0deg); }
+  66% { transform: translate(calc(var(--tour-loader-direction, 1) * 50%)) rotate(calc(var(--tour-loader-direction, 1) * 180deg)); }
+  90%, 100% { transform: translate(0) rotate(calc(var(--tour-loader-direction, 1) * 180deg)); }
+}
+
+@keyframes tour-assistant-loader-flip-blocks-root {
+  0% { transform: scaleX(1) rotate(0deg); }
+  50% { transform: scaleX(-1) rotate(-90deg); }
+}
+
+@keyframes tour-assistant-loader-flip-panels {
+  0%, 5% { transform: scale(var(--tour-loader-scale, 1)) translate(0) perspective(8em) rotateY(0deg); }
+  33% { transform: scale(var(--tour-loader-scale, 1)) translate(-0.18em) perspective(8em) rotateX(0deg); }
+  66% { transform: scale(var(--tour-loader-scale, 1)) translate(-0.18em) perspective(8em) rotateX(-180deg); }
+  95%, 100% { transform: scale(var(--tour-loader-scale, 1)) translate(0) perspective(8em) rotateX(-180deg); }
+}
+
+@keyframes tour-assistant-loader-flip-color {
+  0% { background: var(--tour-assistant-loader-primary); border-radius: 0; }
+  50% { background: var(--tour-assistant-loader-secondary); border-radius: 999px 0 0 999px; }
+}
+
+@keyframes tour-assistant-loader-flip-triangles-root {
+  0%, 49.99% { transform: scaleX(1) rotate(0deg); }
+  50%, 100% { transform: scaleX(-1) rotate(-90deg); }
+}
+
+@keyframes tour-assistant-loader-dual-frames {
+  0% { width: 0%; }
+  100% { width: 75%; }
+}
+
+@keyframes tour-assistant-loader-arcade-track {
+  25% { background-position: 0 0, 100% 100%, 100% calc(100% - 0.08em); }
+  50% { background-position: 0 100%, 100% 100%, 0 calc(100% - 0.08em); }
+  75% { background-position: 0 100%, 100% 0, 100% 0.08em; }
+}
+
+@keyframes tour-assistant-loader-loading-bar {
+  0%, 25% { background-size: 50% 100%; }
+  25.1%, 75% { background-size: 0 0, 50% 100%; }
+  75.1%, 100% { background-size: 0 0, 0 0; }
+}
+
+@keyframes tour-assistant-loader-loading-bar-arm {
+  25%, 25.1% { left: 0; }
+  50% { left: calc(100% - 0.95em); }
+  75%, 75.1% { left: calc(100% - 0.95em); }
+}
+
+@keyframes tour-assistant-loader-rgb-stack-root {
+  0% { transform: translateY(-250%); clip-path: inset(100% 0 0 0); }
+  25%, 100% { transform: translateY(0); clip-path: inset(-100% 0 0 0); }
+}
+
+@keyframes tour-assistant-loader-rgb-stack-middle {
+  0%, 25% { transform: translateY(-250%); }
+  50%, 100% { transform: translateY(0); }
+}
+
+@keyframes tour-assistant-loader-rgb-stack-top {
+  0%, 50% { transform: translateY(-250%); }
+  75%, 100% { transform: translateY(0); }
+}
+
+@keyframes tour-assistant-loader-pixel-climber-root {
+  0%, 30% { background-position: 0 0; }
+  50%, 100% { background-position: 0 -0.05em; }
+}
+
+@keyframes tour-assistant-loader-pixel-climber-sprite {
+  50%, 100% { top: 109.5%; }
+}
+
+@keyframes tour-assistant-loader-pixel-climber-text {
+  0%, 30% { transform: translateY(0); }
+  80%, 100% { transform: translateY(-260%); }
+}
+
+@keyframes tour-assistant-loader-corner-chase {
+  0% { top: 0; left: 0; }
+  25% { top: 100%; left: 0; }
+  50% { top: 100%; left: 100%; }
+  75% { top: 0; left: 100%; }
+  100% { top: 0; left: 0; }
+}
+
+@keyframes tour-assistant-loader-corner-spin {
+  80%, 100% { transform: rotate(0.5turn); }
+}
+
+@keyframes tour-assistant-loader-checker {
+  100% { background-position: 0 0.66em, 0.33em 0; }
+}
+
+@keyframes tour-assistant-loader-stripe-sweep {
+  0% { background-position: 100% 0, 0 100%; }
+  23%, 33% { background-position: calc(2 * 100% / 3) 0, calc(1 * 100% / 3) 100%; }
+  56%, 66% { background-position: calc(1 * 100% / 3) 0, calc(2 * 100% / 3) 100%; }
+  90%, 100% { background-position: 0 0, 100% 100%; }
+}
+
+@keyframes tour-assistant-loader-double-dots-drip {
+  0% { background-size: 100% 0%, 0.22em 0.22em; background-position: top, 50% 50%; }
+  80% { background-size: 100% 70%, 0.22em 0.22em; background-position: top, 50% 70%; }
+  84%, 100% { background-size: 100% 0%, 0.22em 0.22em; background-position: top, 50% 50%; }
+}
+
+@keyframes tour-assistant-loader-double-dots-gasp {
+  0%, 70% { background-size: 100% 40%, 0.22em 0.22em; }
+  85% { background-size: 100% 120%, 0.22em 0.22em; }
+  100% { background-size: 100% 40%, 0.22em 0.22em; }
+}
+
+@keyframes tour-assistant-loader-double-dots-wink {
+  0%, 20% { transform: scaleX(var(--tour-loader-scale-x, 1)) rotate(0deg); clip-path: inset(0); }
+  60%, 100% { transform: scaleX(var(--tour-loader-scale-x, 1)) rotate(30deg); clip-path: inset(40% 0 0); }
+}
+
+@keyframes tour-assistant-loader-quadrant-lines {
+  0% { background-position: 50% 0, 100% 100%, 0 100%, 0 0; }
+  25% { background-position: 0 0, 100% 50%, 0 100%, 0 0; }
+  50% { background-position: 0 0, 100% 0, 50% 100%, 0 0; }
+  75% { background-position: 0 0, 100% 0, 100% 100%, 0 50%; }
+  75.01% { background-position: 100% 0, 100% 0, 100% 100%, 0 50%; }
+  100% { background-position: 50% 0, 100% 0, 100% 100%, 0 100%; }
+}
+
+@keyframes tour-assistant-loader-track-runner {
+  0% { background-position: left 0.02em bottom 0.02em, 100% 0, 0 100%, 0 0; }
+  12.5% { background-position: left 50% bottom 0.02em, 100% 0, 0 100%, 0 0; }
+  25% { background-position: left 50% top 0.02em, 100% 0, 0 100%, 0 0; }
+  37.5% { background-position: right 0.02em top 0.02em, 100% 0, 0 100%, 0 0; }
+  50% { background-position: right 0.02em bottom 0.02em, 0 0, 100% 100%, 0 0; }
+  62.5% { background-position: right 50% bottom 0.02em, 0 0, 100% 100%, 0 0; }
+  75% { background-position: right 50% top 0.02em, 0 0, 100% 100%, 0 0; }
+  87.5% { background-position: left 0.02em top 0.02em, 0 0, 100% 100%, 0 0; }
+  100% { background-position: left 0.02em bottom 0.02em, 100% 0, 0 100%, 0 0; }
+}
+
+@keyframes tour-assistant-loader-rail-bounce {
+  0%, 50% { transform: translateY(-1.7em); }
+}
+
+@keyframes tour-assistant-loader-rail-slides-steps {
+  0%, 100% { background-position: 0 -1em, 100% -1em; }
+  17.5% { background-position: 0 100%, 100% -1em, 0 -1em, 100% -1em; }
+  35% { background-position: 0 100%, 100% 100%, 0 -1em, 100% -1em; }
+  52.5% { background-position: 0 100%, 100% 100%, 0 calc(100% - 0.34em), 100% -1em; }
+  70%, 98% { background-position: 0 100%, 100% 100%, 0 calc(100% - 0.34em), 100% calc(100% - 0.34em); }
+}
+
+@keyframes tour-assistant-loader-rail-slides-shift {
+  0%, 70% { transform: translateX(0); }
+  100% { transform: translateX(200%); }
+}
+
+.tour-assistant-nav-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 30px;
+  height: 28px;
+  padding: 0 !important;
+  line-height: 1;
+}
+
+.tour-assistant-nav-btn[data-open='true'] {
+  background: rgba(var(--tour-accent, 99, 102, 241), 0.16);
+  border-color: rgba(var(--tour-accent, 99, 102, 241), 0.55);
+  color: rgba(var(--tour-accent, 99, 102, 241), 1);
+}
+
+.tour-assistant-nav-btn-icon {
+  display: block;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.tour-assistant {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding: 0.85rem 1rem;
+  border-top: 1px solid rgba(128, 128, 128, 0.15);
+}
+
+.tour-assistant-form {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.35rem 0.4rem;
+  border-radius: 0.55rem;
+  border: 1px solid rgba(var(--tour-accent, 99, 102, 241), 0.35);
+  background: rgba(var(--tour-accent, 99, 102, 241), 0.06);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.tour-assistant-form:focus-within {
+  border-color: rgba(var(--tour-accent, 99, 102, 241), 0.7);
+  box-shadow: 0 0 0 3px rgba(var(--tour-accent, 99, 102, 241), 0.15);
+}
+
+.tour-assistant-icon {
+  display: inline-grid;
+  place-items: center;
+  width: var(--tour-assistant-loader-slot-width);
+  height: var(--tour-assistant-loader-slot-height);
+  flex-shrink: 0;
+  opacity: 0.95;
+  line-height: 0;
+  overflow: hidden;
+}
+
+.tour-assistant-icon > .tour-loader {
+  flex: 0 0 auto;
+}
+
+.tour-assistant-icon--crosshair-orbit {
+  width: 2.05rem;
+  height: 1.85rem;
+}
+
+.tour-assistant-icon--loading-bar {
+  width: 2.2rem;
+  height: 1.6rem;
+}
+
+.tour-assistant-icon--pixel-climber {
+  width: 1.4rem;
+  height: 1.65rem;
+}
+
+.tour-assistant-icon--track-runner {
+  width: 1.85rem;
+  height: 1.35rem;
+}
+
+.tour-assistant-icon--rail-bounce,
+.tour-assistant-icon--rail-slides {
+  width: 2.15rem;
+  height: 1.4rem;
+}
+
+.tour-assistant-input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: inherit;
+  font: inherit;
+  font-size: 0.78rem;
+}
+
+.tour-assistant-input::placeholder {
+  color: currentColor;
+  opacity: 0.5;
+}
+
+.tour-assistant-send,
+.tour-assistant-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border-radius: 0.4rem;
+  border: 1px solid transparent;
+  background: transparent;
+  color: inherit;
+  font-size: 0.8rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s, opacity 0.15s;
+  flex-shrink: 0;
+}
+
+.tour-assistant-send {
+  background: rgba(var(--tour-accent, 99, 102, 241), 0.85);
+  color: #fff;
+  font-weight: 700;
+}
+
+.tour-assistant-send:hover:not(:disabled) {
+  background: rgba(var(--tour-accent, 99, 102, 241), 1);
+}
+
+.tour-assistant-send:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.tour-assistant-close:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.tour-assistant-empty {
+  margin: 0;
+  font-size: 0.72rem;
+  opacity: 0.65;
+  padding: 0.1rem 0.25rem;
+}
+
+.tour-assistant-results {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.tour-assistant-result {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  width: 100%;
+  text-align: left;
+  padding: 0.45rem 0.6rem;
+  border-radius: 0.45rem;
+  border: 1px solid rgba(var(--tour-accent, 99, 102, 241), 0.2);
+  background: rgba(var(--tour-accent, 99, 102, 241), 0.04);
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  transition: border-color 0.15s, background-color 0.15s, transform 0.15s;
+}
+
+.tour-assistant-result:hover {
+  border-color: rgba(var(--tour-accent, 99, 102, 241), 0.55);
+  background: rgba(var(--tour-accent, 99, 102, 241), 0.1);
+  transform: translateX(1px);
+}
+
+.tour-assistant-result-title {
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.tour-assistant-result-snippet {
+  font-size: 0.7rem;
+  opacity: 0.75;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.tour-assistant-result-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.05rem;
+  font-size: 0.66rem;
+  opacity: 0.7;
+  letter-spacing: 0.02em;
+}
+
+.tour-assistant-result-tour {
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.tour-assistant-result-jump {
+  color: rgba(var(--tour-accent, 99, 102, 241), 1);
+  font-weight: 700;
+}
+
+/* ──────────────────────────────────────────────────────────────────────
+   shadcn-style tooltip (vendored markup, vanilla CSS skin).
+   Used by the React Radix wrapper (.rp-tooltip-content / .rp-tooltip-arrow)
+   and by the Angular RpTooltipDirective which renders the same classes.
+   ──────────────────────────────────────────────────────────────────── */
+
+.rp-tooltip-content {
+  z-index: 2147483647;
+  max-width: 20rem;
+  max-height: min(50vh, 18rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border-radius: 0.375rem;
+  padding: 0.4rem 0.6rem;
+  background: #0f172a;
+  color: #f8fafc;
+  font-size: 0.72rem;
+  line-height: 1.35;
+  font-weight: 500;
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  white-space: pre-line;
+  word-break: break-word;
+  pointer-events: auto;
+  transform-origin: var(--radix-tooltip-content-transform-origin, center);
+  animation: rp-tooltip-in 120ms ease-out;
+}
+
+.rp-tooltip-content[data-state='closed'] {
+  animation: rp-tooltip-out 80ms ease-in;
+}
+
+.rp-tooltip-arrow {
+  fill: #0f172a;
+}
+
+@keyframes rp-tooltip-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes rp-tooltip-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+/* Angular directive emits the same content class but positions it manually
+   against the trigger rect. It sets [data-side] and uses --rp-tooltip-x/y
+   to drive transform-origin for a nice pop. */
+.rp-tooltip-content--manual {
+  position: fixed;
+  transform-origin: var(--rp-tooltip-origin, center bottom);
+}
+
+.rp-tooltip-content--manual .rp-tooltip-arrow {
+  position: absolute;
+  width: 10px;
+  height: 5px;
+  overflow: hidden;
+}
+
+.rp-tooltip-content--manual .rp-tooltip-arrow::after {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: #0f172a;
+  transform: rotate(45deg);
+  top: -4px;
+  left: 1px;
+}
+
+.rp-tooltip-content--manual[data-side='top'] .rp-tooltip-arrow {
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.rp-tooltip-content--manual[data-side='bottom'] .rp-tooltip-arrow {
+  top: -5px;
+  left: 50%;
+  transform: translateX(-50%) rotate(180deg);
+}

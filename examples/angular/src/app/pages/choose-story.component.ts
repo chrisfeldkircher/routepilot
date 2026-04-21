@@ -49,6 +49,15 @@ const SCENARIOS: Scenario[] = [
     description:
       'A settings page that documents itself. Every toggle is demonstrated live via a step-scoped preparation that reverts cleanly on exit.',
   },
+  {
+    id: 'ask-the-tour',
+    tourId: 'assistant-showcase',
+    icon: 'smart_toy',
+    label: 'Ask the Tour',
+    startRoute: '/import',
+    description:
+      'BM25-ranked step retrieval wired into the tooltip footer. Users type a natural-language question and jump straight to the step that answers them.',
+  },
 ];
 
 @Component({
