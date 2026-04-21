@@ -3,6 +3,7 @@ import { Hero } from '../components/Hero';
 import { InteractiveDemo } from '../components/InteractiveDemo';
 import { KeyPillars } from '../components/KeyPillars';
 import { DevExperience } from '../components/DevExperience';
+import { AskTheTour } from '../components/AskTheTour';
 import { Install } from '../components/Install';
 import { FrameworkSupport } from '../components/FrameworkSupport';
 import { UseCaseGrid } from '../components/UseCaseGrid';
@@ -17,6 +18,7 @@ export function LandingPage() {
         <InteractiveDemo />
         <KeyPillars />
         <DevExperience />
+        <AskTheTour />
         <Install />
         <FrameworkSupport />
         <UseCaseGrid />

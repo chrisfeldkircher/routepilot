@@ -13,16 +13,22 @@
     "build:engine": "npm run build -w @routepilot/engine",
     "build:react": "npm run build -w @routepilot/react",
     "build:angular": "npm run build -w @routepilot/angular",
-    "build:packages": "npm run build:engine && npm run build:react && npm run build:angular",
+    "build:assistant": "npm run build -w @routepilot/assistant",
+    "build:assistant-react": "npm run build -w @routepilot/assistant-react",
+    "build:assistant-angular": "npm run build -w @routepilot/assistant-angular",
+    "build:packages": "npm run build:engine && npm run build:react && npm run build:angular && npm run build:assistant && npm run build:assistant-react && npm run build:assistant-angular",
     "build:site": "npm run build -w @routepilot/site",
     "build:angular-example": "npm run build -w @routepilot/angular-example",
     "build": "npm run build:packages && npm run build:site && npm run build:angular-example",
-    "test": "npm run test -w @routepilot/engine",
+    "test": "npm run test -w @routepilot/engine && npm run test -w @routepilot/assistant",
     "check": "npm run test && npm run build",
     "pack:engine": "npm pack --dry-run -w @routepilot/engine",
     "pack:react": "npm pack --dry-run -w @routepilot/react",
     "pack:angular": "npm pack --dry-run -w @routepilot/angular",
-    "pack:packages": "npm run pack:engine && npm run pack:react && npm run pack:angular"
+    "pack:assistant": "npm pack --dry-run -w @routepilot/assistant",
+    "pack:assistant-react": "npm pack --dry-run -w @routepilot/assistant-react",
+    "pack:assistant-angular": "npm pack --dry-run -w @routepilot/assistant-angular",
+    "pack:packages": "npm run pack:engine && npm run pack:react && npm run pack:angular && npm run pack:assistant && npm run pack:assistant-react && npm run pack:assistant-angular"
   },
   "devDependencies": {
     "typescript": "~5.9.0"

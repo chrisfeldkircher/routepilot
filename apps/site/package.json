@@ -12,6 +12,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@routepilot/assistant": "*",
     "@routepilot/engine": "*",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",

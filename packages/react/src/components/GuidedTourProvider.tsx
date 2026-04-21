@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useSyncExternalStore } from 'react';
 import type { ReactNode } from 'react';
 import GuidedTourContext from './GuidedTourContext';
+import { TooltipSlotProvider } from './TooltipSlotContext';
 import {
   TourRegistry,
   createTourRegistry,
@@ -35,6 +36,18 @@ export interface GuidedTourProviderProps {
   navigation?: TourNavigationAdapter;
   /** Global configuration overrides. */
   config?: TourEngineConfig;
+  /**
+   * Optional ReactNode rendered inside the tour tooltip, between the body
+   * and the step-counter/Back/Next footer. The surrounding divider only
+   * renders when this node is truthy.
+   */
+  tooltipFooterSlot?: ReactNode;
+  /**
+   * Optional ReactNode rendered inline in the tour tooltip footer,
+   * before the Back button. Use this for plugin toggles that should
+   * sit next to the primary nav buttons.
+   */
+  tooltipFooterNavSlot?: ReactNode;
 }
 
 const useStableMachine = (demoBridge?: DemoDataBridge, eventBridge?: EventBridge, debug?: boolean): TourStateMachine => {
@@ -92,6 +105,8 @@ export const GuidedTourProvider = ({
   location: locationProp,
   navigation,
   config: configProp,
+  tooltipFooterSlot,
+  tooltipFooterNavSlot,
 }: GuidedTourProviderProps): JSX.Element => {
   const machine = useStableMachine(demoBridge, eventBridge, debug);
   const effectiveRegistry = useRegistry(registry, tours);
@@ -131,7 +146,16 @@ export const GuidedTourProvider = ({
     [snapshot, actions, effectiveRegistry, services, sequence, routeGuard, currentPath, resolvedConfig]
   );
 
-  return <GuidedTourContext.Provider value={contextValue}>{children}</GuidedTourContext.Provider>;
+  const slotValue = useMemo(
+    () => ({ footer: tooltipFooterSlot, footerNav: tooltipFooterNavSlot }),
+    [tooltipFooterSlot, tooltipFooterNavSlot],
+  );
+
+  return (
+    <GuidedTourContext.Provider value={contextValue}>
+      <TooltipSlotProvider value={slotValue}>{children}</TooltipSlotProvider>
+    </GuidedTourContext.Provider>
+  );
 };
 
 export default GuidedTourProvider;

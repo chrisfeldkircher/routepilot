@@ -1,5 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { mergeConfig, DEFAULT_CONFIG, type TourEngineConfig } from './config';
+import {
+  mergeConfig,
+  DEFAULT_CONFIG,
+  type TourEngineConfig,
+} from './config';
 
 describe('mergeConfig', () => {
   it('returns defaults when no user config provided', () => {
@@ -51,6 +55,11 @@ describe('mergeConfig', () => {
     expect(result.confetti?.scriptUrl).toBe('/local/confetti.js');
   });
 
+  it('merges assistant config', () => {
+    const result = mergeConfig({ assistant: { loadingAnimation: 'checker' } });
+    expect(result.assistant?.loadingAnimation).toBe('checker');
+  });
+
   it('allows disabling confetti via false', () => {
     const result = mergeConfig({ confetti: { scriptUrl: false } });
     expect(result.confetti?.scriptUrl).toBe(false);
@@ -74,6 +83,7 @@ describe('mergeConfig', () => {
       scroll: { behavior: 'auto' },
       highlight: { outlineClassName: 'my-class' },
       confetti: { scriptUrl: '/my-confetti.js' },
+      assistant: { loadingAnimation: 'pulse-ring' },
     };
     const result = mergeConfig(custom);
 
@@ -85,5 +95,6 @@ describe('mergeConfig', () => {
     expect(result.scroll?.block).toBe('center'); // default preserved
     expect(result.highlight?.outlineClassName).toBe('my-class');
     expect(result.confetti?.scriptUrl).toBe('/my-confetti.js');
+    expect(result.assistant?.loadingAnimation).toBe('pulse-ring');
   });
 });

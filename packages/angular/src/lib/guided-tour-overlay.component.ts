@@ -258,6 +258,10 @@ import {
             </div>
           </div>
 
+          <div class="tour-tooltip-slot-area">
+            <ng-content select="[rpTooltipFooter]"></ng-content>
+          </div>
+
           <!-- Footer -->
           <div class="tour-tooltip-footer gt-px-4 gt-py-3 gt-border-t gt-border-border/60 gt-flex gt-items-center gt-justify-between">
             <span
@@ -271,6 +275,7 @@ import {
               class="tour-tooltip-nav gt-flex gt-items-center gt-gap-2"
               style="margin-left: auto"
             >
+              <ng-content select="[rpTooltipFooterNav]"></ng-content>
               <button
                 (click)="doBack()"
                 [disabled]="!canGoBack || isTransitioning"
@@ -907,7 +912,16 @@ export class GuidedTourOverlayComponent implements OnInit, AfterViewInit, OnDest
       }
     };
 
+    const isEditable = (target: EventTarget | null): boolean => {
+      if (!(target instanceof HTMLElement)) return false;
+      if (target.isContentEditable) return true;
+      const tag = target.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return true;
+      return false;
+    };
+
     const preventKeys = (e: KeyboardEvent) => {
+      if (isEditable(e.target)) return;
       if (findScrollableAncestor(e.target)) return;
       const scrollKeys = ['ArrowUp', 'ArrowDown', 'Space', 'PageUp', 'PageDown', 'Home', 'End'];
       if (scrollKeys.includes(e.code)) e.preventDefault();

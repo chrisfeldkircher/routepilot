@@ -50,12 +50,21 @@ export interface TourConfettiConfig {
   scriptUrl?: string | false;
 }
 
+export interface TourAssistantConfig {
+  /**
+   * Loader shown inside assistant prompt inputs.
+   * Defaults to `random`, which picks a new animation every time a tour starts.
+   */
+  loadingAnimation?: string | 'random';
+}
+
 export interface TourEngineConfig {
   tooltip?: TourTooltipConfig;
   backdrop?: TourBackdropConfig;
   scroll?: TourScrollConfig;
   highlight?: TourHighlightConfig;
   confetti?: TourConfettiConfig;
+  assistant?: TourAssistantConfig;
 }
 
 export const DEFAULT_CONFIG: TourEngineConfig = {
@@ -86,6 +95,9 @@ export const DEFAULT_CONFIG: TourEngineConfig = {
   confetti: {
     scriptUrl: 'https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js',
   },
+  assistant: {
+    loadingAnimation: 'random',
+  },
 };
 
 export const mergeConfig = (user?: TourEngineConfig): TourEngineConfig => {
@@ -103,5 +115,6 @@ export const mergeConfig = (user?: TourEngineConfig): TourEngineConfig => {
     scroll: { ...DEFAULT_CONFIG.scroll, ...user.scroll },
     highlight: { ...DEFAULT_CONFIG.highlight, ...user.highlight },
     confetti: { ...DEFAULT_CONFIG.confetti, ...user.confetti },
+    assistant: { ...DEFAULT_CONFIG.assistant, ...user.assistant },
   };
 };

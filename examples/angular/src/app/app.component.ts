@@ -7,6 +7,10 @@ import {
   GuidedTourService,
   TourRouterAdapterService,
 } from '@routepilot/angular';
+import {
+  TourAssistantButtonComponent,
+  TourAssistantPromptComponent,
+} from '@routepilot/assistant-angular';
 import { HeaderComponent } from './components/header.component';
 import { NavComponent } from './components/nav.component';
 import { FooterComponent } from './components/footer.component';
@@ -18,6 +22,8 @@ import { FooterComponent } from './components/footer.component';
     CommonModule,
     RouterOutlet,
     GuidedTourOverlayComponent,
+    TourAssistantButtonComponent,
+    TourAssistantPromptComponent,
     HeaderComponent,
     NavComponent,
     FooterComponent,
@@ -32,7 +38,10 @@ import { FooterComponent } from './components/footer.component';
       </main>
       <app-footer></app-footer>
     </div>
-    <rp-guided-tour-overlay />
+    <rp-guided-tour-overlay>
+      <rp-tour-assistant-prompt rpTooltipFooter></rp-tour-assistant-prompt>
+      <rp-tour-assistant-button rpTooltipFooterNav></rp-tour-assistant-button>
+    </rp-guided-tour-overlay>
   `,
 })
 export class AppComponent {

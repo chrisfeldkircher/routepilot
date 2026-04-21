@@ -1,0 +1,64 @@
+{
+  "name": "@routepilot/assistant",
+  "version": "0.1.0",
+  "description": "In-browser retrieval core for @routepilot/engine — maps free-text questions to the tour step that answers them. Framework-agnostic (BM25 + tokenizer + types). Pair with @routepilot/assistant-react or @routepilot/assistant-angular for UI.",
+  "license": "MIT",
+  "homepage": "https://routepilot.dev",
+  "bugs": {
+    "url": "https://github.com/chrisfeldkircher/routepilot/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chrisfeldkircher/routepilot.git",
+    "directory": "packages/assistant"
+  },
+  "keywords": [
+    "guided-tour",
+    "search",
+    "bm25",
+    "retrieval",
+    "assistant",
+    "routepilot"
+  ],
+  "type": "module",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./tour-assistant.css": "./dist/tour-assistant.css"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsup && cp src/tour-assistant.css dist/tour-assistant.css",
+    "prepack": "npm run build",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "peerDependencies": {
+    "@routepilot/engine": "^0.1.0"
+  },
+  "peerDependenciesMeta": {
+    "@routepilot/engine": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@routepilot/engine": "*",
+    "tsup": "^8.5.1",
+    "typescript": "~5.9.0",
+    "vitest": "^3.2.3"
+  }
+}

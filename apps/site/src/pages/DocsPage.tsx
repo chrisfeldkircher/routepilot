@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
 import { Nav } from '../components/Nav';
 import { Footer } from '../components/Footer';
 
@@ -100,6 +99,7 @@ const sections = [
   { id: 'routing', label: 'Routing' },
   { id: 'dag-validation', label: 'DAG Validation' },
   { id: 'confetti', label: 'Confetti' },
+  { id: 'assistant', label: 'Ask the Tour (Assistant)' },
   { id: 'engine-config', label: 'Engine Config' },
 ];
 
@@ -110,31 +110,32 @@ function scrollTo(id: string) {
 export function DocsPage() {
   const [activeSection, setActiveSection] = useState('getting-started');
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const location = useLocation();
-  const navigate = useNavigate();
 
-  // Keep all framework tabs in sync through the URL so links can preselect a stack.
-  const framework = useMemo(() => {
-    const params = new URLSearchParams(location.search);
+  // Synced via history.replaceState rather than react-router navigate() —
+  // navigate() resets scroll on search-param changes, which jumps the page
+  // whenever the reader switches framework tabs mid-scroll.
+  const [framework, setFrameworkState] = useState<Framework>(() => {
+    if (typeof window === 'undefined') return DEFAULT_FRAMEWORK;
+    const params = new URLSearchParams(window.location.search);
     const value = params.get('framework');
     return isFramework(value) ? value : DEFAULT_FRAMEWORK;
-  }, [location.search]);
+  });
 
-  const setFramework = useCallback(
-    (next: Framework) => {
-      const params = new URLSearchParams(location.search);
-      params.set('framework', next);
-      navigate(
-        {
-          pathname: location.pathname,
-          search: `?${params.toString()}`,
-          hash: location.hash,
-        },
-        { replace: true },
-      );
-    },
-    [location.hash, location.pathname, location.search, navigate],
-  );
+  const setFramework = useCallback((next: Framework) => {
+    const scrollY = window.scrollY;
+    setFrameworkState(next);
+
+    const params = new URLSearchParams(window.location.search);
+    params.set('framework', next);
+    const newUrl = `${window.location.pathname}?${params.toString()}${window.location.hash}`;
+    window.history.replaceState(window.history.state, '', newUrl);
+
+    requestAnimationFrame(() => {
+      if (window.scrollY !== scrollY) {
+        window.scrollTo({ top: scrollY, behavior: 'instant' as ScrollBehavior });
+      }
+    });
+  }, []);
 
   useEffect(() => {
     const hash = window.location.hash.replace('#', '');
@@ -2046,6 +2047,230 @@ interface DagTourNode {
 >`}</CodeBlock>
           </Section>
 
+          <Section id="assistant" title="Ask the Tour (Assistant)">
+            <P>
+              <Code>@routepilot/assistant</Code> adds a BM25-ranked search bar to the
+              tooltip footer. Users type a natural-language question, the engine ranks
+              the tour steps that best answer it, and clicking a result calls
+              <Code>goTo()</Code> on that step. Retrieval runs entirely in the browser —
+              no LLM, no API key, no backend.
+            </P>
+
+            <H3>Install</H3>
+            <P>The core package is framework-agnostic. Pair it with the binding for your stack:</P>
+            <FrameworkTabs
+              framework={framework}
+              onChange={setFramework}
+              react={
+                <CodeBlock>{`npm install @routepilot/assistant @routepilot/assistant-react`}</CodeBlock>
+              }
+              angular={
+                <CodeBlock>{`npm install @routepilot/assistant @routepilot/assistant-angular`}</CodeBlock>
+              }
+            />
+
+            <H3>Wire it</H3>
+            <P>
+              The engine exposes two footer slots on the tooltip:{' '}
+              <Code>tooltipFooterNavSlot</Code> (a small button next to Back/Next) and{' '}
+              <Code>tooltipFooterSlot</Code> (a full-width panel below the buttons).
+              Drop the assistant button into the nav slot and the prompt into the
+              footer slot.
+            </P>
+            <FrameworkTabs
+              framework={framework}
+              onChange={setFramework}
+              react={
+                <CodeBlock>{`import {
+  GuidedTourProvider,
+  GuidedTourOverlay,
+} from '@routepilot/react';
+import { TourIndex } from '@routepilot/assistant';
+import {
+  TourAssistantProvider,
+  TourAssistantButton,
+  TourAssistantPrompt,
+} from '@routepilot/assistant-react';
+import '@routepilot/assistant/tour-assistant.css';
+
+import { onboardingTour } from './tours/onboarding.tour';
+import { faqTour } from './tours/faq.tour';
+
+const tours = [onboardingTour, faqTour];
+const assistant = TourIndex.fromTours(tours);
+
+<GuidedTourProvider
+  tours={tours}
+  tooltipFooterNavSlot={<TourAssistantButton />}
+  tooltipFooterSlot={<TourAssistantPrompt />}
+>
+  <TourAssistantProvider index={assistant}>
+    <App />
+    <GuidedTourOverlay />
+  </TourAssistantProvider>
+</GuidedTourProvider>`}</CodeBlock>
+              }
+              angular={
+                <CodeBlock>{`// app.config.ts
+import { ApplicationConfig } from '@angular/core';
+import { GUIDED_TOUR_CONFIG } from '@routepilot/angular';
+import { TourIndex } from '@routepilot/assistant';
+import {
+  provideTourAssistant,
+  TourAssistantButtonComponent,
+  TourAssistantPromptComponent,
+} from '@routepilot/assistant-angular';
+import { onboardingTour } from './tours/onboarding.tour';
+import { faqTour } from './tours/faq.tour';
+
+const tours = [onboardingTour, faqTour];
+const assistantIndex = TourIndex.fromTours(tours);
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    {
+      provide: GUIDED_TOUR_CONFIG,
+      useValue: {
+        tours,
+        tooltipFooterNavComponent: TourAssistantButtonComponent,
+        tooltipFooterComponent: TourAssistantPromptComponent,
+      },
+    },
+    provideTourAssistant({ index: assistantIndex }),
+  ],
+};
+
+// styles.css
+@import '@routepilot/assistant/tour-assistant.css';`}</CodeBlock>
+              }
+            />
+            <P>
+              The slot props are generic — the engine has no assistant-specific
+              knowledge. Remove the dependency and clear the slot props, and the
+              tooltip footer looks exactly as it did before.
+            </P>
+
+            <H3>How ranking works</H3>
+            <P>
+              Retrieval is classic BM25 with <Code>k1 = 1.5</Code> and{' '}
+              <Code>b = 0.75</Code> over a tokenized, stemmed token stream built from
+              each step&apos;s <Code>title</Code>, <Code>body</Code>,{' '}
+              <Code>chapter</Code>, <Code>meta</Code>, and an{' '}
+              <Code>assistant</Code> bag you control. The whole index is built once on
+              the client from the <Code>TourDefinition[]</Code> you already have — zero
+              network calls, no embeddings, under 20 KB gzipped, fully offline.
+            </P>
+
+            <H3>Per-step tuning with <Code>meta.assistant</Code></H3>
+            <P>
+              Every step accepts an optional <Code>meta.assistant</Code> bag. Use it to
+              surface slang, error-message fragments, or aliases that the body text
+              wouldn&apos;t naturally contain — the ranker treats them as first-class
+              tokens scoped to that step.
+            </P>
+            <CodeBlock>{`{
+  id: 'answer-upload-stuck',
+  chapter: 'Answers',
+  content: {
+    title: 'Upload progress bar is stuck',
+    body: 'The progress bar sits at 87% and has not moved...',
+  },
+  meta: {
+    assistant: {
+      keywords: [
+        'upload stuck',
+        'progress stuck',
+        'resume upload',
+        'tus resumable',
+      ],
+      aliases: [
+        'upload hanging',
+        'upload never finishes',
+        'stuck at 87',
+      ],
+      intent: 'recover a stalled upload',
+      errorPatterns: [/upload.*timeout/i, /chunk.*failed/i],
+    },
+  },
+}`}</CodeBlock>
+            <PropTable
+              rows={[
+                ['keywords', 'string[]', 'Extra tokens added to the index for this step. Highest effective boost.'],
+                ['aliases', 'string[]', 'Alternative phrasings (slang, error strings, user-speak). Query-time synonym expansion.'],
+                ['intent', 'string', 'One-line description of what this step answers. Indexed like body text.'],
+                ['errorPatterns', 'RegExp[]', 'Patterns boosted when the user pastes an actual error message into the prompt.'],
+              ]}
+            />
+
+            <H3>Index-level configuration</H3>
+            <P>
+              <Code>TourIndex.fromTours(tours, options)</Code> accepts the following
+              options. Every knob is optional; defaults work for most apps.
+            </P>
+            <PropTable
+              rows={[
+                ['fieldWeights', 'Partial<FieldWeights>', 'Per-field boosts. Defaults: title × 3, assistant × 2, body × 1, chapter × 1.'],
+                ['synonyms', 'Record<string, string[]>', 'Query-time synonym expansion, e.g. { cancel: [\'abort\', \'stop\'] }. Hot-swappable — not baked into the index.'],
+                ['scope', '\'all-tours\' | \'current-tour-only\' | \'current-tour-first\'', 'Controls which tours the assistant ranks against at query time.'],
+                ['reranker', '(args) => Promise<Match[]>', 'Optional async hook. Lexical BM25 runs first; use this to plug in an LLM, cross-encoder, or custom scoring.'],
+                ['loadingAnimation', '\'pulse\' | \'wave\' | \'spinner\' | ReactNode', 'What to show in the prompt while an async reranker resolves.'],
+              ]}
+            />
+
+            <H3>Scope it to the active tour</H3>
+            <P>
+              For demo-style tours you almost always want the assistant to stay
+              inside the current experience rather than suggesting steps from
+              unrelated tours. Pass <Code>scope</Code> when constructing the index:
+            </P>
+            <CodeBlock>{`const assistant = TourIndex.fromTours(tours, {
+  scope: 'current-tour-only', // or 'current-tour-first' to allow cross-tour fallback
+});`}</CodeBlock>
+
+            <H3>Anchor UI elements for tours</H3>
+            <P>
+              The button and prompt components ship with stable{' '}
+              <Code>data-tour</Code> hooks you can target from inside a tour — useful
+              when writing a meta-tour that teaches users how to use the assistant
+              itself:
+            </P>
+            <PropTable
+              rows={[
+                [
+                  'tour-assistant-button',
+                  'button',
+                  <span className="inline-flex items-center gap-1.5">
+                    The <AssistantBotIcon /> footer toggle (collapsed or expanded).
+                  </span>,
+                ],
+                ['tour-assistant-prompt', 'container', 'The prompt panel (input + results list) while open.'],
+                ['tour-assistant-input', 'input', 'The search input itself.'],
+                ['tour-assistant-results', 'list', 'The results list; individual results expose tour-assistant-result.'],
+                ['tour-assistant-close', 'button', 'The close button on the prompt.'],
+              ]}
+            />
+            <P>
+              Use the <Code>highlight:</Code> selector prefix so the shimmer ring
+              renders inside the tooltip&apos;s own stacking context:
+            </P>
+            <CodeBlock>{`{
+  id: 'try-it',
+  selector: 'highlight:[data-tour="tour-assistant-button"]',
+  content: {
+    title: 'Try it — the button is in the tooltip footer',
+    body: 'Click the highlighted assistant button to open the prompt.',
+  },
+}`}</CodeBlock>
+
+            <H3>When to reach for it</H3>
+            <ul className="list-disc list-inside text-on-surface-variant space-y-2 mb-6 ml-2">
+              <li>Tours that grow past five or six steps where Next → Next stops working.</li>
+              <li>FAQ-style flows where each step answers a specific question.</li>
+              <li>Error-recovery flows where the user already pastes the error message.</li>
+              <li>Interactive docs where the tour steps double as searchable reference entries.</li>
+            </ul>
+          </Section>
+
           <Section id="engine-config" title="Engine Config">
             <P>
               The full <Code>TourEngineConfig</Code> lets you customize every
@@ -2304,7 +2529,7 @@ function CodeBlock({ children }: { children: string }) {
   );
 }
 
-function PropTable({ rows }: { rows: [string, string, string][] }) {
+function PropTable({ rows }: { rows: [string, string, ReactNode][] }) {
   return (
     <div className="overflow-x-auto mb-6">
       <table className="w-full text-sm">
@@ -2316,8 +2541,8 @@ function PropTable({ rows }: { rows: [string, string, string][] }) {
           </tr>
         </thead>
         <tbody>
-          {rows.map(([prop, type, desc]) => (
-            <tr key={prop} className="border-b border-outline-variant/10">
+          {rows.map(([prop, type, desc], i) => (
+            <tr key={`${prop}-${i}`} className="border-b border-outline-variant/10">
               <td className="py-2.5 pr-4 font-mono text-primary whitespace-nowrap">{prop}</td>
               <td className="py-2.5 pr-4 font-mono text-tertiary text-xs whitespace-nowrap">{type}</td>
               <td className="py-2.5 text-on-surface-variant">{desc}</td>
@@ -2326,5 +2551,24 @@ function PropTable({ rows }: { rows: [string, string, string][] }) {
         </tbody>
       </table>
     </div>
+  );
+}
+
+function AssistantBotIcon({ className = 'w-4 h-4 inline-block align-[-2px] text-tertiary' }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+      focusable="false"
+      className={className}
+    >
+      <path d="M9 15C8.44771 15 8 15.4477 8 16C8 16.5523 8.44771 17 9 17C9.55229 17 10 16.5523 10 16C10 15.4477 9.55229 15 9 15Z" />
+      <path d="M14 16C14 15.4477 14.4477 15 15 15C15.5523 15 16 15.4477 16 16C16 16.5523 15.5523 17 15 17C14.4477 17 14 16.5523 14 16Z" />
+      <path fillRule="evenodd" clipRule="evenodd" d="M12 1C10.8954 1 10 1.89543 10 3C10 3.74028 10.4022 4.38663 11 4.73244V7H6C4.34315 7 3 8.34315 3 10V20C3 21.6569 4.34315 23 6 23H18C19.6569 23 21 21.6569 21 20V10C21 8.34315 19.6569 7 18 7H13V4.73244C13.5978 4.38663 14 3.74028 14 3C14 1.89543 13.1046 1 12 1ZM5 10C5 9.44772 5.44772 9 6 9H7.38197L8.82918 11.8944C9.16796 12.572 9.86049 13 10.618 13H13.382C14.1395 13 14.832 12.572 15.1708 11.8944L16.618 9H18C18.5523 9 19 9.44772 19 10V20C19 20.5523 18.5523 21 18 21H6C5.44772 21 5 20.5523 5 20V10ZM13.382 11L14.382 9H9.61803L10.618 11H13.382Z" />
+      <path d="M1 14C0.447715 14 0 14.4477 0 15V17C0 17.5523 0.447715 18 1 18C1.55228 18 2 17.5523 2 17V15C2 14.4477 1.55228 14 1 14Z" />
+      <path d="M22 15C22 14.4477 22.4477 14 23 14C23.5523 14 24 14.4477 24 15V17C24 17.5523 23.5523 18 23 18C22.4477 18 22 17.5523 22 17V15Z" />
+    </svg>
   );
 }

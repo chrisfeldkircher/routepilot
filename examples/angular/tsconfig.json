@@ -20,7 +20,9 @@
     "lib": ["ES2022", "dom"],
     "paths": {
       "@routepilot/engine": ["../../packages/engine/src/index.ts"],
-      "@routepilot/angular": ["../../packages/angular/src/index.ts"]
+      "@routepilot/angular": ["../../packages/angular/src/index.ts"],
+      "@routepilot/assistant": ["../../packages/assistant/src/index.ts"],
+      "@routepilot/assistant-angular": ["../../packages/assistant-angular/src/index.ts"]
     }
   },
   "angularCompilerOptions": {
