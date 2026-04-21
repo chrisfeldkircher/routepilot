@@ -59,6 +59,7 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
       '@routepilot/engine': path.resolve(__dirname, '../../packages/engine/src'),
       '@routepilot/react': path.resolve(__dirname, '../../packages/react/src'),
+      '@routepilot/assistant': path.resolve(__dirname, '../../packages/assistant/src'),
     },
   },
   server: {
